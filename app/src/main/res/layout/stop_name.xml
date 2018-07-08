@@ -9,5 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Station name"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textSize="21sp"
+        android:textStyle="bold" />
 </LinearLayout>
