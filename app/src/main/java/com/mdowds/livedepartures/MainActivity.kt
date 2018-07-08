@@ -21,8 +21,7 @@ class MainActivity : WearableActivity() {
     private lateinit var adapter: ArrivalsRecyclerViewAdapter
     private lateinit var requestQueue: RequestQueue
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-
-//    val REQUEST_CHECK_SETTINGS = 111
+    private lateinit var locationCallback: LocationCallback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,47 +29,35 @@ class MainActivity : WearableActivity() {
         setAmbientEnabled()
 
         setUpRecyclerView()
-
         requestQueue = Volley.newRequestQueue(this)
-
-        getCurrentLocation()
+        setUpLocationServices()
     }
 
-    private fun getCurrentLocation() {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+    override fun onResume() {
+        super.onResume()
+        startLocationUpdates()
+    }
 
-        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-            if (location != null) requestNearbyStops(location.latitude, location.longitude)
+    override fun onPause() {
+        super.onPause()
+        stopLocationUpdates()
+    }
+
+    private fun startLocationUpdates() {
+        val locationRequest = LocationRequest().apply {
+            interval = 10000
+            fastestInterval = 5000
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 
-//        val locationRequest = LocationRequest().apply {
-//            interval = 10000
-//            fastestInterval = 5000
-//            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-//        }
-//
-//        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
-//        val client: SettingsClient = LocationServices.getSettingsClient(this)
-//        val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
-//
-//        task.addOnSuccessListener { locationSettingsResponse ->
-//        }
-//
-//        task.addOnFailureListener { exception ->
-//            if (exception is ResolvableApiException) {
-//                // Location settings are not satisfied, but this can be fixed
-//                // by showing the user a dialog.
-//                try {
-//                    // Show the dialog by calling startResolutionForResult(),
-//                    // and check the result in onActivityResult().
-//
-//                    exception.startResolutionForResult(this@MainActivity,
-//                            REQUEST_CHECK_SETTINGS)
-//                } catch (sendEx: IntentSender.SendIntentException) {
-//                    // Ignore the error.
-//                }
-//            }
-//        }
+        fusedLocationClient.requestLocationUpdates(locationRequest,
+                locationCallback,
+                null /* Looper */)
+    }
+
+
+    private fun stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
     private fun requestNearbyStops(lat: Double, lon: Double) {
@@ -108,6 +95,16 @@ class MainActivity : WearableActivity() {
         arrivalsRecyclerView.adapter = adapter
 
         arrivalsRecyclerView.layoutManager = LinearLayoutManager(this)
+    }
+
+    private fun setUpLocationServices() {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult?) {
+                locationResult ?: return
+                requestNearbyStops(locationResult.lastLocation.latitude, locationResult.lastLocation.longitude)
+            }
+        }
     }
 
     private fun updateResults(newResults: List<TflArrivalPrediction>, stopName: String) {
