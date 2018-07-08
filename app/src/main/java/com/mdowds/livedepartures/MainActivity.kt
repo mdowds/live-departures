@@ -48,7 +48,7 @@ class MainActivity : WearableActivity() {
 
     private fun updateListItems(newModels: List<TflArrivalPrediction>) {
         val newModelsOrdered = newModels.sortedBy{ it.timeToStation }
-        val newItems = newModelsOrdered.map { ArrivalInfoModel(it.lineName, it.towards, "${it.timeToStation} secs") }
+        val newItems = newModelsOrdered.map { ArrivalInfoModel(it.lineName, it.destinationName, "${it.timeToStation} secs") }
         adapter.listItems = newItems
         adapter.notifyDataSetChanged()
     }
