@@ -1,27 +1,18 @@
 package com.mdowds.livedepartures
 
-import android.location.Location
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.wearable.activity.WearableActivity
-import android.util.Log
-import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.activity_main.*
-import com.android.volley.RequestQueue
 import com.google.android.gms.location.*
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : WearableActivity() {
 
     private lateinit var adapter: ArrivalsRecyclerViewAdapter
-    private lateinit var requestQueue: RequestQueue
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
+    private lateinit var tflApi: TflApi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +20,7 @@ class MainActivity : WearableActivity() {
         setAmbientEnabled()
 
         setUpRecyclerView()
-        requestQueue = Volley.newRequestQueue(this)
+        tflApi = TflApi(RequestQueueSingleton.getInstance(this.applicationContext).requestQueue, this::updateResults)
         setUpLocationServices()
     }
 
@@ -60,36 +51,6 @@ class MainActivity : WearableActivity() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
-    private fun requestNearbyStops(lat: Double, lon: Double) {
-        val url = "https://api.tfl.gov.uk/Place?type=NaptanRailStation,NaptanPublicBusCoachTram&lat=$lat&lon=$lon&radius=200"
-
-        val request = StringRequest(Request.Method.GET,
-                url,
-                Response.Listener { response ->
-                    val responseModel = Gson().fromJson<TflStopPoints>(response, TflStopPoints::class.java)
-                    requestArrivalInfo(responseModel.places.first())
-                },
-                Response.ErrorListener { Log.e("API request error", "That didn't work!") }
-        )
-
-        requestQueue.add(request)
-    }
-
-    private fun requestArrivalInfo(stopPoint: TflStopPoint) {
-        val url = "https://api.tfl.gov.uk/StopPoint/${stopPoint.naptanId}/Arrivals"
-
-        val request = StringRequest(Request.Method.GET,
-                url,
-                Response.Listener { response ->
-                    val responseModel = Gson().fromJson<List<TflArrivalPrediction>>(response, object : TypeToken<List<TflArrivalPrediction>>() {}.type)
-                    updateResults(responseModel, stopPoint.commonName)
-                },
-                Response.ErrorListener { Log.e("API request error", "That didn't work!") }
-        )
-
-        requestQueue.add(request)
-    }
-
     private fun setUpRecyclerView() {
         adapter = ArrivalsRecyclerViewAdapter("Loading", listOf())
         arrivalsRecyclerView.adapter = adapter
@@ -102,7 +63,7 @@ class MainActivity : WearableActivity() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 locationResult ?: return
-                requestNearbyStops(locationResult.lastLocation.latitude, locationResult.lastLocation.longitude)
+                tflApi.getNearbyStops(locationResult.lastLocation.latitude, locationResult.lastLocation.longitude)
             }
         }
     }
