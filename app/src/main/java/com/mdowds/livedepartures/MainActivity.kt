@@ -20,7 +20,7 @@ class MainActivity : WearableActivity() {
         setAmbientEnabled()
 
         setUpRecyclerView()
-        tflApi = TflApi(RequestQueueSingleton.getInstance(this.applicationContext).requestQueue, this::updateResults)
+        tflApi = TflApi(RequestQueueSingleton.getInstance(this.applicationContext).requestQueue)
         setUpLocationServices()
     }
 
@@ -63,9 +63,15 @@ class MainActivity : WearableActivity() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 locationResult ?: return
-                tflApi.getNearbyStops(locationResult.lastLocation.latitude, locationResult.lastLocation.longitude)
+                tflApi.getNearbyStops(locationResult.lastLocation.latitude, locationResult.lastLocation.longitude) {
+                    requestArrivals(it)
+                }
             }
         }
+    }
+
+    private fun requestArrivals(stopPoints: TflStopPoints) {
+        tflApi.getArrivals(stopPoints.places.first(), this::updateResults)
     }
 
     private fun updateResults(newResults: List<TflArrivalPrediction>, stopName: String) {

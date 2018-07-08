@@ -11,24 +11,25 @@ import com.google.gson.reflect.TypeToken
 private const val BASE_URL = "https://api.tfl.gov.uk"
 
 typealias ArrivalsCallback = (List<TflArrivalPrediction>, String) -> Unit
+typealias NearbyStopsCallback = (TflStopPoints) -> Unit
 
-class TflApi(private val requestQueue: RequestQueue, private val arrivalsCallback: ArrivalsCallback) {
+class TflApi(private val requestQueue: RequestQueue) {
 
-    fun getNearbyStops(lat: Double, lon: Double) {
+    fun getNearbyStops(lat: Double, lon: Double, callback: NearbyStopsCallback) {
         val endpoint = "/Place?type=NaptanRailStation,NaptanPublicBusCoachTram&lat=$lat&lon=$lon&radius=200"
 
         makeGetRequest(endpoint) { response ->
-            val responseModel = Gson().fromJson<TflStopPoints>(response, TflStopPoints::class.java)
-            getArrivals(responseModel.places.first())
+            val stopPoints = Gson().fromJson<TflStopPoints>(response, TflStopPoints::class.java)
+            callback(stopPoints)
         }
     }
 
-    private fun getArrivals(stopPoint: TflStopPoint) {
+    fun getArrivals(stopPoint: TflStopPoint, callback: ArrivalsCallback) {
         val endpoint = "/StopPoint/${stopPoint.naptanId}/Arrivals"
 
         makeGetRequest(endpoint) { response ->
             val responseModel = Gson().fromJson<List<TflArrivalPrediction>>(response, object : TypeToken<List<TflArrivalPrediction>>() {}.type)
-            arrivalsCallback(responseModel, stopPoint.commonName)
+            callback(responseModel, stopPoint.commonName)
         }
     }
 
@@ -36,7 +37,7 @@ class TflApi(private val requestQueue: RequestQueue, private val arrivalsCallbac
         val request = StringRequest(Request.Method.GET,
                 BASE_URL + endpoint,
                 Response.Listener(responseCallback),
-                Response.ErrorListener { error -> Log.e("API request error", error.toString()) }
+                Response.ErrorListener { Log.e("API request error", it.toString()) }
         )
 
         requestQueue.add(request)
