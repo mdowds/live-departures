@@ -1,6 +1,6 @@
 package com.mdowds.livedepartures
 
-data class ArrivalInfoModel(val line: String, val destination: String, val arrivalTime: String) {
+data class ArrivalModel(val line: String, val destination: String, val arrivalTime: String) {
 
     constructor(tflArrivalPrediction: TflArrivalPrediction) : this(
             tflArrivalPrediction.lineName,

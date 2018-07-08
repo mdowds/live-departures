@@ -3,13 +3,13 @@ package com.mdowds.livedepartures
 import org.junit.Test
 import org.junit.Assert.*
 
-class ArrivalInfoModelTests {
+class ArrivalModelTests {
 
     private val arrivalPrediction = TflArrivalPrediction("Piccadilly Line", "Cockfosters", 120)
 
     @Test
     fun `Creates an ArrivalInfoModel from a TflArrivalPrediction`() {
-        val arrivalInfoModel = ArrivalInfoModel(arrivalPrediction)
+        val arrivalInfoModel = ArrivalModel(arrivalPrediction)
 
         assertEquals(arrivalPrediction.lineName, arrivalInfoModel.line)
         assertEquals(arrivalPrediction.destinationName, arrivalInfoModel.destination)
@@ -18,14 +18,14 @@ class ArrivalInfoModelTests {
     @Test
     fun `Strips "Rail Station" from destination name`() {
         val arrivalPrediction = TflArrivalPrediction("London Overground", "Barking Rail Station", 120)
-        val arrivalInfoModel = ArrivalInfoModel(arrivalPrediction)
+        val arrivalInfoModel = ArrivalModel(arrivalPrediction)
 
         assertEquals("Barking", arrivalInfoModel.destination)
     }
 
     @Test
     fun `Converts arrival time to minutes`() {
-        val arrivalInfoModel = ArrivalInfoModel(arrivalPrediction)
+        val arrivalInfoModel = ArrivalModel(arrivalPrediction)
 
         assertEquals("2 mins", arrivalInfoModel.arrivalTime)
     }
@@ -33,7 +33,7 @@ class ArrivalInfoModelTests {
     @Test
     fun `Converts arrival time to minutes and rounds`() {
         val arrivalPrediction = TflArrivalPrediction("Piccadilly Line", "Cockfosters", 130)
-        val arrivalInfoModel = ArrivalInfoModel(arrivalPrediction)
+        val arrivalInfoModel = ArrivalModel(arrivalPrediction)
 
         assertEquals("2 mins", arrivalInfoModel.arrivalTime)
     }
@@ -41,7 +41,7 @@ class ArrivalInfoModelTests {
     @Test
     fun `Sets arrival time as "Due" when arrival in less than 1 minute`() {
         val arrivalPrediction = TflArrivalPrediction("Piccadilly Line", "Cockfosters", 50)
-        val arrivalInfoModel = ArrivalInfoModel(arrivalPrediction)
+        val arrivalInfoModel = ArrivalModel(arrivalPrediction)
 
         assertEquals("Due", arrivalInfoModel.arrivalTime)
     }

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import kotlinx.android.synthetic.main.arrival_info.view.*
 import kotlinx.android.synthetic.main.stop_name.view.*
 
-class ArrivalsRecyclerViewAdapter(var listItems: List<ArrivalInfoModel>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ArrivalsRecyclerViewAdapter(var stopName: String, var listItems: List<ArrivalModel>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private enum class ViewType(val rawValue: Int) {
         STOP_NAME(0), ARRIVAL_INFO(1)
@@ -33,7 +33,7 @@ class ArrivalsRecyclerViewAdapter(var listItems: List<ArrivalInfoModel>) : Recyc
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is ArrivalInfoViewHolder -> holder.bindDepartureInfoModel(listItems[position - 1])
-            is StopNameViewHolder -> holder.setStopName("Queens Road")
+            is StopNameViewHolder -> holder.setStopName(stopName)
         }
     }
 
@@ -48,10 +48,10 @@ class ArrivalsRecyclerViewAdapter(var listItems: List<ArrivalInfoModel>) : Recyc
 
     class ArrivalInfoViewHolder(private var view: View) : RecyclerView.ViewHolder(view) {
 
-        fun bindDepartureInfoModel(arrivalInfoModel: ArrivalInfoModel) {
-            view.route_name.text = arrivalInfoModel.line
-            view.route_destination.text = arrivalInfoModel.destination
-            view.arrival_time.text = arrivalInfoModel.arrivalTime
+        fun bindDepartureInfoModel(arrivalModel: ArrivalModel) {
+            view.route_name.text = arrivalModel.line
+            view.route_destination.text = arrivalModel.destination
+            view.arrival_time.text = arrivalModel.arrivalTime
         }
     }
 }
