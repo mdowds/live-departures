@@ -11,6 +11,9 @@ import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.DividerItemDecoration.HORIZONTAL
+
 
 class MainActivity : WearableActivity() {
 
@@ -22,9 +25,9 @@ class MainActivity : WearableActivity() {
         setContentView(R.layout.activity_main)
         setAmbientEnabled()
 
-//        recyclerView.isEdgeItemsCenteringEnabled = true
-//        recyclerView.layoutManager = WearableLinearLayoutManager(this)
         arrivalsRecyclerView.layoutManager = LinearLayoutManager(this)
+        val divider = DividerItemDecoration(this, HORIZONTAL)
+        arrivalsRecyclerView.addItemDecoration(divider)
 
         val queue = Volley.newRequestQueue(this)
         val url = "https://api.tfl.gov.uk/StopPoint/910GWLTHQRD/Arrivals"
@@ -34,7 +37,6 @@ class MainActivity : WearableActivity() {
                 url,
                 Response.Listener { response ->
                     val responseModel = Gson().fromJson<List<TflArrivalPrediction>>(response, object : TypeToken<List<TflArrivalPrediction>>() {}.type)
-                    Log.i("API response", responseModel.toString())
                     updateListItems(responseModel)
                 },
                 Response.ErrorListener { Log.e("API request error", "That didn't work!") }
@@ -48,7 +50,7 @@ class MainActivity : WearableActivity() {
 
     private fun updateListItems(newModels: List<TflArrivalPrediction>) {
         val newModelsOrdered = newModels.sortedBy{ it.timeToStation }
-        val newItems = newModelsOrdered.map { ArrivalInfoModel(it.lineName, it.destinationName, "${it.timeToStation} secs") }
+        val newItems = newModelsOrdered.map { ArrivalInfoModel(it) }
         adapter.listItems = newItems
         adapter.notifyDataSetChanged()
     }
