@@ -14,8 +14,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : WearableActivity() {
 
-    private lateinit var models: List<ListModel>
-    private lateinit var adapter: RecyclerViewAdapter
+    private lateinit var models: List<ArrivalInfoModel>
+    private lateinit var adapter: ArrivalsRecyclerViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +24,7 @@ class MainActivity : WearableActivity() {
 
 //        recyclerView.isEdgeItemsCenteringEnabled = true
 //        recyclerView.layoutManager = WearableLinearLayoutManager(this)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        arrivalsRecyclerView.layoutManager = LinearLayoutManager(this)
 
         val queue = Volley.newRequestQueue(this)
         val url = "https://api.tfl.gov.uk/StopPoint/910GWLTHQRD/Arrivals"
@@ -33,22 +33,22 @@ class MainActivity : WearableActivity() {
         val request = StringRequest(Request.Method.GET,
                 url,
                 Response.Listener { response ->
-                    val responseModel = Gson().fromJson<List<ArrivalPrediction>>(response, object : TypeToken<List<ArrivalPrediction>>() {}.type)
+                    val responseModel = Gson().fromJson<List<TflArrivalPrediction>>(response, object : TypeToken<List<TflArrivalPrediction>>() {}.type)
                     Log.i("API response", responseModel.toString())
                     updateListItems(responseModel)
                 },
-                Response.ErrorListener { print("That didn't work!") }
+                Response.ErrorListener { Log.e("API request error", "That didn't work!") }
         )
 
         queue.add(request)
 
-        adapter = RecyclerViewAdapter(models)
-        recyclerView.adapter = adapter
+        adapter = ArrivalsRecyclerViewAdapter(models)
+        arrivalsRecyclerView.adapter = adapter
     }
 
-    private fun updateListItems(newModels: List<ArrivalPrediction>) {
+    private fun updateListItems(newModels: List<TflArrivalPrediction>) {
         val newModelsOrdered = newModels.sortedBy{ it.timeToStation }
-        val newItems = newModelsOrdered.map { ListModel(it.lineName, it.towards, "${it.timeToStation} secs") }
+        val newItems = newModelsOrdered.map { ArrivalInfoModel(it.lineName, it.towards, "${it.timeToStation} secs") }
         adapter.listItems = newItems
         adapter.notifyDataSetChanged()
     }
