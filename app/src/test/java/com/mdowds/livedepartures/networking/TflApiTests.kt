@@ -1,4 +1,4 @@
-package com.mdowds.livedepartures
+package com.mdowds.livedepartures.networking
 
 import com.android.volley.Request
 import com.android.volley.RequestQueue
@@ -24,7 +24,7 @@ class TflApiTests {
 
     @Test
     fun `getArrivals makes a call to the correct endpoint`() {
-        tflApi.getArrivals(TflStopPoint("Waterloo", "WLOO")) { _, _ -> }
+        tflApi.getArrivals(TflStopPoint("Waterloo", "WLOO")) {}
         verify(requestQueue).add(argThat<Request<String>> { url == "https://api.tfl.gov.uk/StopPoint/WLOO/Arrivals"})
     }
 

@@ -4,12 +4,15 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.wearable.activity.WearableActivity
 import com.google.android.gms.location.*
+import com.mdowds.livedepartures.networking.*
+import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.*
+import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : WearableActivity() {
 
-    private lateinit var adapter: ArrivalsRecyclerViewAdapter
+    private lateinit var adapter: SectionedRecyclerViewAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var tflApi: TflApi
@@ -25,6 +28,7 @@ class MainActivity : WearableActivity() {
     }
 
     override fun onResume() {
+        // TODO overall loading state for location and stops fetches
         super.onResume()
         startLocationUpdates()
     }
@@ -52,7 +56,7 @@ class MainActivity : WearableActivity() {
     }
 
     private fun setUpRecyclerView() {
-        adapter = ArrivalsRecyclerViewAdapter("Loading", listOf())
+        adapter = SectionedRecyclerViewAdapter()
         arrivalsRecyclerView.adapter = adapter
 
         arrivalsRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -64,21 +68,33 @@ class MainActivity : WearableActivity() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 locationResult ?: return
                 tflApi.getNearbyStops(locationResult.lastLocation.latitude, locationResult.lastLocation.longitude) {
-                    requestArrivals(it)
+                    createSections(it)
                 }
             }
         }
     }
 
-    private fun requestArrivals(stopPoints: TflStopPoints) {
-        tflApi.getArrivals(stopPoints.places.first(), this::updateResults)
+    private fun createSections(stopPoints: TflStopPoints) {
+        stopPoints.places.take(5).forEach {
+            val stopSection = StopSection(it.commonName, listOf())
+            stopSection.state = LOADING
+            adapter.addSection(stopSection)
+            adapter.notifyDataSetChanged()
+            requestArrivals(it, stopSection)
+        }
     }
 
-    private fun updateResults(newResults: List<TflArrivalPrediction>, stopName: String) {
+    private fun requestArrivals(stopPoint: TflStopPoint, section: StopSection) {
+        tflApi.getArrivals(stopPoint) {
+            updateResults(it, section)
+        }
+    }
+
+    private fun updateResults(newResults: List<TflArrivalPrediction>, section: StopSection) {
         val newModelsOrdered = newResults.sortedBy { it.timeToStation }
-        val newItems = newModelsOrdered.map { ArrivalModel(it) }
-        adapter.listItems = newItems
-        adapter.stopName = stopName
+        val newItems = newModelsOrdered.take(5).map { ArrivalModel(it) }
+        section.arrivals = newItems
+        section.state = LOADED
         adapter.notifyDataSetChanged()
     }
 }

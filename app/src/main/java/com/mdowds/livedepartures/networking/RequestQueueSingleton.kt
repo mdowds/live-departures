@@ -1,4 +1,4 @@
-package com.mdowds.livedepartures
+package com.mdowds.livedepartures.networking
 
 import android.content.Context
 import com.android.volley.RequestQueue
@@ -10,7 +10,8 @@ class RequestQueueSingleton constructor(context: Context) {
         private var INSTANCE: RequestQueueSingleton? = null
         fun getInstance(context: Context) =
                 INSTANCE ?: synchronized(this) {
-                    INSTANCE ?: RequestQueueSingleton(context)
+                    INSTANCE
+                            ?: RequestQueueSingleton(context)
                 }
     }
 

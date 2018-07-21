@@ -1,4 +1,4 @@
-package com.mdowds.livedepartures
+package com.mdowds.livedepartures.networking
 
 import android.util.Log
 import com.android.volley.Request
@@ -10,7 +10,7 @@ import com.google.gson.reflect.TypeToken
 
 private const val BASE_URL = "https://api.tfl.gov.uk"
 
-typealias ArrivalsCallback = (List<TflArrivalPrediction>, String) -> Unit
+typealias ArrivalsCallback = (List<TflArrivalPrediction>) -> Unit
 typealias NearbyStopsCallback = (TflStopPoints) -> Unit
 
 class TflApi(private val requestQueue: RequestQueue) {
@@ -29,7 +29,7 @@ class TflApi(private val requestQueue: RequestQueue) {
 
         makeGetRequest(endpoint) { response ->
             val responseModel = Gson().fromJson<List<TflArrivalPrediction>>(response, object : TypeToken<List<TflArrivalPrediction>>() {}.type)
-            callback(responseModel, stopPoint.commonName)
+            callback(responseModel)
         }
     }
 
