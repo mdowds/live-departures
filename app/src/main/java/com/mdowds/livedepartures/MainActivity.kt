@@ -13,9 +13,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : WearableActivity() {
 
     private lateinit var adapter: SectionedRecyclerViewAdapter
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
     private lateinit var tflApi: TflApi
+    private lateinit var locationManager: LocationManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,35 +23,20 @@ class MainActivity : WearableActivity() {
 
         setUpRecyclerView()
         tflApi = TflApi(RequestQueueSingleton.getInstance(this.applicationContext).requestQueue)
-        setUpLocationServices()
+        locationManager = LocationManager(this)
     }
 
     override fun onResume() {
         // TODO overall loading state for location and stops fetches
         super.onResume()
-        startLocationUpdates()
+        locationManager.startLocationUpdates {
+            tflApi.getNearbyStops(it.latitude, it.longitude, this::createSections)
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        stopLocationUpdates()
-    }
-
-    private fun startLocationUpdates() {
-        val locationRequest = LocationRequest().apply {
-            interval = 10000
-            fastestInterval = 5000
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
-
-        fusedLocationClient.requestLocationUpdates(locationRequest,
-                locationCallback,
-                null /* Looper */)
-    }
-
-
-    private fun stopLocationUpdates() {
-        fusedLocationClient.removeLocationUpdates(locationCallback)
+        locationManager.stopLocationUpdates()
     }
 
     private fun setUpRecyclerView() {
@@ -60,18 +44,6 @@ class MainActivity : WearableActivity() {
         arrivalsRecyclerView.adapter = adapter
 
         arrivalsRecyclerView.layoutManager = LinearLayoutManager(this)
-    }
-
-    private fun setUpLocationServices() {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
-                locationResult ?: return
-                tflApi.getNearbyStops(locationResult.lastLocation.latitude, locationResult.lastLocation.longitude) {
-                    createSections(it)
-                }
-            }
-        }
     }
 
     private fun createSections(stopPoints: TflStopPoints) {
