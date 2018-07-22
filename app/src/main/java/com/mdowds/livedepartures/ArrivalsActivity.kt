@@ -55,6 +55,10 @@ class ArrivalsActivity : WearableActivity(), ArrivalsView {
         adapter.notifyDataSetChanged()
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        presenter.onRequestPermissionsResult(requestCode, grantResults)
+    }
+
     private fun setUpRecyclerView() {
         adapter = SectionedRecyclerViewAdapter()
         arrivalsRecyclerView.adapter = adapter

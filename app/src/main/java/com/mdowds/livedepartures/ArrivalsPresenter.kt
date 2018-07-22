@@ -1,7 +1,12 @@
 package com.mdowds.livedepartures
 
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.location.Location
+import android.util.Log
 import com.mdowds.livedepartures.networking.*
+import com.mdowds.livedepartures.utils.DevicePermissionsManager.Companion.PERMISSIONS_REQUEST_CODE
+import com.mdowds.livedepartures.utils.FusedLocationManager
+import com.mdowds.livedepartures.utils.LocationManager
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import java.util.*
 
@@ -24,12 +29,34 @@ class ArrivalsPresenter(private val view: ArrivalsView,
 
     fun onResume() {
         // TODO overall loading state for location and stops fetches
-        locationManager.startLocationUpdates(this::onLocationResponse)
+        startLocationUpdates()
     }
 
     fun onPause() {
         locationManager.stopLocationUpdates()
         arrivalRequestsTimer.purge()
+    }
+
+    fun onRequestPermissionsResult(requestCode: Int, grantResults: IntArray) {
+        if (requestCode == PERMISSIONS_REQUEST_CODE) {
+            when {
+                grantResults.isEmpty() -> Log.i("Permissions result", "User interaction was cancelled.")
+                (grantResults[0] == PERMISSION_GRANTED) -> startLocationUpdates()
+                else -> {
+                    // TODO show message with link to settings if permission rejected
+//                    showSnackbar(R.string.permission_denied_explanation, R.string.settings,
+//                            View.OnClickListener {
+//                                // Build intent that displays the App settings screen.
+//                                val intent = Intent().apply {
+//                                    action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+//                                    data = Uri.fromParts("package", APPLICATION_ID, null)
+//                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//                                }
+//                                startActivity(intent)
+//                            })
+                }
+            }
+        }
     }
 
     fun onLocationResponse(location: Location) {
@@ -61,6 +88,8 @@ class ArrivalsPresenter(private val view: ArrivalsView,
         val newArrivals = newResultsOrdered.take(5).map { ArrivalModel(it) }
         view.updateResults(newArrivals, section)
     }
+
+    private fun startLocationUpdates() = locationManager.startLocationUpdates(this::onLocationResponse)
 
     private fun locationHasSignificantlyChanged(currentLocation: Location? ,newLocation: Location) : Boolean {
         currentLocation ?: return true

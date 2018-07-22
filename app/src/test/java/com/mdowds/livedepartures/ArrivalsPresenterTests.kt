@@ -1,9 +1,12 @@
 package com.mdowds.livedepartures
 
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeLocation
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeTflArrivalPrediction
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeTflStopPoints
 import com.mdowds.livedepartures.networking.TransportInfoApi
+import com.mdowds.livedepartures.utils.DevicePermissionsManager.Companion.PERMISSIONS_REQUEST_CODE
+import com.mdowds.livedepartures.utils.LocationManager
 import com.nhaarman.mockitokotlin2.*
 import org.junit.Before
 import org.junit.Test
@@ -140,5 +143,12 @@ class ArrivalsPresenterTests {
         val arrivals = (1..10).map { makeTflArrivalPrediction() }
         presenter.onArrivalsResponse(arrivals, mock())
         verify(mockView).updateResults(argThat { count() == 5 }, any())
+    }
+
+    @Test
+    fun `onRequestPermissionsResult starts location updates if the permission was granted`() {
+        presenter.onRequestPermissionsResult(PERMISSIONS_REQUEST_CODE, intArrayOf(PERMISSION_GRANTED))
+
+        verify(mockLocationManager).startLocationUpdates(any())
     }
 }
