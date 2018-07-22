@@ -9,5 +9,5 @@
     android:paddingBottom="50dp"
     android:paddingTop="20dp"
     android:scrollbars="vertical"
-    tools:context="com.mdowds.livedepartures.MainActivity"
+    tools:context="com.mdowds.livedepartures.ArrivalsActivity"
     tools:deviceIds="wear" />

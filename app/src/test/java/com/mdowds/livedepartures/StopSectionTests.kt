@@ -2,6 +2,7 @@ package com.mdowds.livedepartures
 
 import android.view.View
 import android.widget.TextView
+import com.mdowds.livedepartures.helpers.TestDataFactory.makeArrivalModel
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
@@ -56,11 +57,7 @@ class StopSectionTests {
         verify(mockViewContainer.routeDestination).text = "Destination"
         verify(mockViewContainer.arrivalTime).text = "Arrival Time"
     }
-
-    private fun makeArrivalModel() : ArrivalModel {
-        return ArrivalModel("Line", "Destination", "Arrival Time")
-    }
-
+    
     class MockArrivalInfoViewContainer {
         val routeName = mock<TextView>()
         val routeDestination = mock<TextView>()

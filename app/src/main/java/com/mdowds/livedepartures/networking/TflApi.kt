@@ -13,9 +13,14 @@ private const val BASE_URL = "https://api.tfl.gov.uk"
 typealias ArrivalsCallback = (List<TflArrivalPrediction>) -> Unit
 typealias NearbyStopsCallback = (TflStopPoints) -> Unit
 
-class TflApi(private val requestQueue: RequestQueue) {
+interface TransportInfoApi {
+    fun getNearbyStops(lat: Double, lon: Double, callback: NearbyStopsCallback)
+    fun getArrivals(stopPoint: TflStopPoint, callback: ArrivalsCallback)
+}
 
-    fun getNearbyStops(lat: Double, lon: Double, callback: NearbyStopsCallback) {
+class TflApi(private val requestQueue: RequestQueue): TransportInfoApi {
+
+    override fun getNearbyStops(lat: Double, lon: Double, callback: NearbyStopsCallback) {
         val endpoint = "/Place?type=NaptanRailStation,NaptanPublicBusCoachTram&lat=$lat&lon=$lon&radius=200"
 
         makeGetRequest(endpoint) { response ->
@@ -24,7 +29,7 @@ class TflApi(private val requestQueue: RequestQueue) {
         }
     }
 
-    fun getArrivals(stopPoint: TflStopPoint, callback: ArrivalsCallback) {
+    override fun getArrivals(stopPoint: TflStopPoint, callback: ArrivalsCallback) {
         val endpoint = "/StopPoint/${stopPoint.naptanId}/Arrivals"
 
         makeGetRequest(endpoint) { response ->

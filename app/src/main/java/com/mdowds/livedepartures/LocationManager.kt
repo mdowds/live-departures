@@ -6,7 +6,12 @@ import com.google.android.gms.location.*
 
 typealias LastLocationCallback = (Location) -> Unit
 
-class LocationManager(private val fusedLocationClient : FusedLocationProviderClient) {
+interface LocationManager {
+    fun startLocationUpdates(callback: LastLocationCallback)
+    fun stopLocationUpdates()
+}
+
+class FusedLocationManager(private val fusedLocationClient : FusedLocationProviderClient): LocationManager {
 
     constructor(requestingActivity: Activity) : this(LocationServices.getFusedLocationProviderClient(requestingActivity))
 
@@ -20,7 +25,7 @@ class LocationManager(private val fusedLocationClient : FusedLocationProviderCli
         }
     }
 
-    fun startLocationUpdates(callback: LastLocationCallback) {
+    override fun startLocationUpdates(callback: LastLocationCallback) {
 
         locationCallback.lastLocationCallback = callback
 
@@ -35,7 +40,7 @@ class LocationManager(private val fusedLocationClient : FusedLocationProviderCli
                 null /* Looper */)
     }
 
-    fun stopLocationUpdates() {
+    override fun stopLocationUpdates() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 }
