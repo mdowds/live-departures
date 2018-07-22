@@ -7,18 +7,20 @@ import com.mdowds.livedepartures.networking.TransportInfoApi
 import com.nhaarman.mockitokotlin2.*
 import org.junit.Before
 import org.junit.Test
+import java.util.*
 
 class ArrivalsPresenterTests {
 
     private val mockView = mock<ArrivalsView>()
     private val mockLocationManager = mock<LocationManager>()
     private val mockApi = mock<TransportInfoApi>()
+    private val mockTimer = mock<Timer>()
 
     private lateinit var presenter: ArrivalsPresenter
 
     @Before
     fun setUp(){
-        presenter = ArrivalsPresenter(mockView, mockLocationManager, mockApi)
+        presenter = ArrivalsPresenter(mockView, mockLocationManager, mockApi, mockTimer)
     }
 
     @Test
@@ -74,17 +76,30 @@ class ArrivalsPresenterTests {
     }
 
     @Test
-    fun `onStopPointsResponse makes an arrivals request for each stop point`() {
+    fun `onStopPointsResponse triggers a TimerTask for each stop point every 10 seconds`() {
         val stopPoints = makeTflStopPoints()
         presenter.onStopPointsResponse(stopPoints)
-        verify(mockApi, times(stopPoints.places.count())).getArrivals(any(), any())
+        verify(mockTimer, times(stopPoints.places.count())).scheduleAtFixedRate(any(), eq(0L), eq(10000L))
     }
 
     @Test
-    fun `onStopPointsResponse makes a maximum of 5 arrivals requests`() {
+    fun `onStopPointsResponse passes a TimerTask that makes an arrivals request`() {
+        val stopPoints = makeTflStopPoints()
+        presenter.onStopPointsResponse(stopPoints)
+
+        argumentCaptor<TimerTask>().apply {
+            verify(mockTimer).scheduleAtFixedRate(capture(), any<Long>(), any())
+
+            firstValue.run()
+            verify(mockApi).getArrivals(any(), any())
+        }
+    }
+
+    @Test
+    fun `onStopPointsResponse triggers a maximum of 5 TimerTasks`() {
         val stopPoints = makeTflStopPoints(10)
         presenter.onStopPointsResponse(stopPoints)
-        verify(mockApi, times(5)).getArrivals(any(), any())
+        verify(mockTimer, times(5)).scheduleAtFixedRate(any(), any<Long>(), any())
     }
 
     @Test
@@ -104,7 +119,7 @@ class ArrivalsPresenterTests {
 
     @Test
     fun `onArrivalsResponse updates the view with a maximum of 5 arrivals`() {
-        val arrivals = (0..10).map { makeTflArrivalPrediction() }
+        val arrivals = (1..10).map { makeTflArrivalPrediction() }
         presenter.onArrivalsResponse(arrivals, mock())
         verify(mockView).updateResults(argThat { count() == 5 }, any())
     }

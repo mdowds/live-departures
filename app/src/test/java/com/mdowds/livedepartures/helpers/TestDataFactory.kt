@@ -18,7 +18,7 @@ object TestDataFactory {
     }
 
     fun makeTflStopPoints(numberOfStopPoints: Int = 1): TflStopPoints {
-        val stopPoints = (0..numberOfStopPoints).map { makeTflStopPoint() }
+        val stopPoints = (1..numberOfStopPoints).map { makeTflStopPoint() }
         return TflStopPoints(stopPoints)
     }
 

@@ -3,10 +3,12 @@ package com.mdowds.livedepartures
 import android.location.Location
 import com.mdowds.livedepartures.networking.*
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
+import java.util.*
 
 class ArrivalsPresenter(private val view: ArrivalsView,
                         private val locationManager: LocationManager,
-                        private val api: TransportInfoApi) {
+                        private val api: TransportInfoApi,
+                        private val timer: Timer) {
 
     private var currentLocation: Location? = null
 
@@ -14,7 +16,8 @@ class ArrivalsPresenter(private val view: ArrivalsView,
         fun create(view: ArrivalsActivity): ArrivalsPresenter {
             return ArrivalsPresenter(view,
                     FusedLocationManager(view),
-                    TflApi(RequestQueueSingleton.getInstance(view.applicationContext).requestQueue)
+                    TflApi(RequestQueueSingleton.getInstance(view.applicationContext).requestQueue),
+                    Timer()
             )
         }
     }
@@ -38,7 +41,14 @@ class ArrivalsPresenter(private val view: ArrivalsView,
     fun onStopPointsResponse(stopPoints: TflStopPoints) {
         stopPoints.places.take(5).forEach {
             val newSection = view.addStopSection(it)
-            requestArrivals(it, newSection)
+
+            val repeatedTask = object : TimerTask() {
+                override fun run() = requestArrivals(it, newSection)
+            }
+
+            val delay = 0L
+            val period = 10000L
+            timer.scheduleAtFixedRate(repeatedTask, delay, period)
         }
     }
 
