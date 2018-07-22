@@ -8,7 +8,7 @@ import java.util.*
 class ArrivalsPresenter(private val view: ArrivalsView,
                         private val locationManager: LocationManager,
                         private val api: TransportInfoApi,
-                        private val timer: Timer) {
+                        private val arrivalRequestsTimer: Timer) {
 
     private var currentLocation: Location? = null
 
@@ -17,7 +17,7 @@ class ArrivalsPresenter(private val view: ArrivalsView,
             return ArrivalsPresenter(view,
                     FusedLocationManager(view),
                     TflApi(RequestQueueSingleton.getInstance(view.applicationContext).requestQueue),
-                    Timer()
+                    Timer("Arrival requests")
             )
         }
     }
@@ -29,6 +29,7 @@ class ArrivalsPresenter(private val view: ArrivalsView,
 
     fun onPause() {
         locationManager.stopLocationUpdates()
+        arrivalRequestsTimer.purge()
     }
 
     fun onLocationResponse(location: Location) {
@@ -39,6 +40,9 @@ class ArrivalsPresenter(private val view: ArrivalsView,
     }
 
     fun onStopPointsResponse(stopPoints: TflStopPoints) {
+        view.removeStopSections()
+        arrivalRequestsTimer.purge()
+
         stopPoints.places.take(5).forEach {
             val newSection = view.addStopSection(it)
 
@@ -48,7 +52,7 @@ class ArrivalsPresenter(private val view: ArrivalsView,
 
             val delay = 0L
             val period = 10000L
-            timer.scheduleAtFixedRate(repeatedTask, delay, period)
+            arrivalRequestsTimer.scheduleAtFixedRate(repeatedTask, delay, period)
         }
     }
 

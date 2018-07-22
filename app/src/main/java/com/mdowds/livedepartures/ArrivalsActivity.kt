@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 interface ArrivalsView {
     fun addStopSection(stopPoint: TflStopPoint): StopSection
+    fun removeStopSections()
     fun updateResults(newArrivals: List<ArrivalModel>, section: Section)
 }
 
@@ -45,6 +46,8 @@ class ArrivalsActivity : WearableActivity(), ArrivalsView {
         adapter.notifyDataSetChanged()
         return stopSection
     }
+
+    override fun removeStopSections() = adapter.removeAllSections()
 
     override fun updateResults(newArrivals: List<ArrivalModel>, section: Section) {
         (section as StopSection).arrivals = newArrivals

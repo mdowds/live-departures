@@ -36,6 +36,12 @@ class ArrivalsPresenterTests {
     }
 
     @Test
+    fun `onPause stops arrivals requests`() {
+        presenter.onPause()
+        verify(mockTimer).purge()
+    }
+
+    @Test
     fun `onLocationResponse requests nearby stops for first location response`() {
         presenter.onLocationResponse(makeLocation(1.0, -1.0))
         verify(mockApi).getNearbyStops(eq(1.0), eq(-1.0), any())
@@ -100,6 +106,18 @@ class ArrivalsPresenterTests {
         val stopPoints = makeTflStopPoints(10)
         presenter.onStopPointsResponse(stopPoints)
         verify(mockTimer, times(5)).scheduleAtFixedRate(any(), any<Long>(), any())
+    }
+
+    @Test
+    fun `onStopPointsResponse clears the current sections in the view`() {
+        presenter.onStopPointsResponse(makeTflStopPoints())
+        verify(mockView).removeStopSections()
+    }
+
+    @Test
+    fun `onStopPointsResponse cancels all existing TimerTasks for arrivals requests`() {
+        presenter.onStopPointsResponse(makeTflStopPoints())
+        verify(mockTimer).purge()
     }
 
     @Test
