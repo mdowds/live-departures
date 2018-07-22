@@ -34,8 +34,10 @@ class TflApi(private val requestQueue: RequestQueue) {
     }
 
     private fun makeGetRequest(endpoint: String, responseCallback: (String) -> Unit) {
+        val url = BASE_URL + endpoint
+        Log.i("GET", url)
         val request = StringRequest(Request.Method.GET,
-                BASE_URL + endpoint,
+                url,
                 Response.Listener(responseCallback),
                 Response.ErrorListener { Log.e("API request error", it.toString()) }
         )

@@ -3,7 +3,6 @@ package com.mdowds.livedepartures
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.wearable.activity.WearableActivity
-import com.google.android.gms.location.*
 import com.mdowds.livedepartures.networking.*
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.*
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
