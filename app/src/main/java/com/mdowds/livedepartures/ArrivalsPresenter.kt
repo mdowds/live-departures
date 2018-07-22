@@ -1,11 +1,14 @@
 package com.mdowds.livedepartures
 
+import android.location.Location
 import com.mdowds.livedepartures.networking.*
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 
 class ArrivalsPresenter(private val view: ArrivalsView,
                         private val locationManager: LocationManager,
                         private val api: TransportInfoApi) {
+
+    private var currentLocation: Location? = null
 
     companion object {
         fun create(view: ArrivalsActivity): ArrivalsPresenter {
@@ -18,13 +21,18 @@ class ArrivalsPresenter(private val view: ArrivalsView,
 
     fun onResume() {
         // TODO overall loading state for location and stops fetches
-        locationManager.startLocationUpdates {
-            api.getNearbyStops(it.latitude, it.longitude, this::onStopPointsResponse)
-        }
+        locationManager.startLocationUpdates(this::onLocationResponse)
     }
 
     fun onPause() {
         locationManager.stopLocationUpdates()
+    }
+
+    fun onLocationResponse(location: Location) {
+        if(!locationHasSignificantlyChanged(currentLocation, location)) return
+
+        currentLocation = location
+        api.getNearbyStops(location.latitude, location.longitude, this::onStopPointsResponse)
     }
 
     fun onStopPointsResponse(stopPoints: TflStopPoints) {
@@ -34,15 +42,20 @@ class ArrivalsPresenter(private val view: ArrivalsView,
         }
     }
 
-    private fun requestArrivals(stopPoint: TflStopPoint, section: Section) {
-        api.getArrivals(stopPoint) {
-            onArrivalsResponse(it, section)
-        }
-    }
-
     fun onArrivalsResponse(newResults: List<TflArrivalPrediction>, section: Section) {
         val newResultsOrdered = newResults.sortedBy { it.timeToStation }
         val newArrivals = newResultsOrdered.take(5).map { ArrivalModel(it) }
         view.updateResults(newArrivals, section)
+    }
+
+    private fun locationHasSignificantlyChanged(currentLocation: Location? ,newLocation: Location) : Boolean {
+        currentLocation ?: return true
+        return currentLocation.distanceTo(newLocation) > 10
+    }
+
+    private fun requestArrivals(stopPoint: TflStopPoint, section: Section) {
+        api.getArrivals(stopPoint) {
+            onArrivalsResponse(it, section)
+        }
     }
 }

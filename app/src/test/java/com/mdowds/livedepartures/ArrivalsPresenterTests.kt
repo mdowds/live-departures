@@ -28,14 +28,35 @@ class ArrivalsPresenterTests {
     }
 
     @Test
-    fun `onResume requests nearby stops upon location response`() {
-        presenter.onResume()
-        argumentCaptor<LastLocationCallback>().apply {
-            verify(mockLocationManager).startLocationUpdates(capture())
+    fun `onPause stops location updates`() {
+        presenter.onPause()
+        verify(mockLocationManager).stopLocationUpdates()
+    }
 
-            firstValue(makeLocation(1.0, -1.0))
-            verify(mockApi).getNearbyStops(eq(1.0), eq(-1.0), any())
-        }
+    @Test
+    fun `onLocationResponse requests nearby stops for first location response`() {
+        presenter.onLocationResponse(makeLocation(1.0, -1.0))
+        verify(mockApi).getNearbyStops(eq(1.0), eq(-1.0), any())
+    }
+
+    @Test
+    fun `onLocationResponse doesn't request nearby stops if location has changed by less than 10 metres`() {
+        val originalLocation = makeLocation(1.0, -1.0)
+        whenever(originalLocation.distanceTo(any())).thenReturn(2.0f)
+
+        presenter.onLocationResponse(originalLocation)
+        presenter.onLocationResponse(makeLocation(1.0, -1.0))
+        verify(mockApi, times(1)).getNearbyStops(any(), any(), any())
+    }
+
+    @Test
+    fun `onLocationResponse does request nearby stops if location has changed by more than 10 metres`() {
+        val originalLocation = makeLocation(1.0, -1.0)
+        whenever(originalLocation.distanceTo(any())).thenReturn(11.0f)
+
+        presenter.onLocationResponse(originalLocation)
+        presenter.onLocationResponse(makeLocation(1.1, -1.0))
+        verify(mockApi, times(2)).getNearbyStops(any(), any(), any())
     }
 
     @Test
