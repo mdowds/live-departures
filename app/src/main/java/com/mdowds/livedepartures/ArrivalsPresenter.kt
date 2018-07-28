@@ -28,7 +28,7 @@ class ArrivalsPresenter(private val view: ArrivalsView,
     }
 
     fun onResume() {
-        // TODO overall loading state for location and stops fetches
+        if(currentLocation == null) view.showLoadingSpinner()
         startLocationUpdates()
     }
 
@@ -81,6 +81,8 @@ class ArrivalsPresenter(private val view: ArrivalsView,
             val period = 10000L
             arrivalRequestsTimer.scheduleAtFixedRate(repeatedTask, delay, period)
         }
+
+        view.hideLoadingSpinner()
     }
 
     fun onArrivalsResponse(newResults: List<TflArrivalPrediction>, section: Section) {
