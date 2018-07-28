@@ -16,6 +16,16 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/stop_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Stop indicator"
+        android:textAlignment="center"
+        android:textSize="21sp"
+        android:textStyle="bold" />
+
+    <TextView
         android:id="@+id/no_departures_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

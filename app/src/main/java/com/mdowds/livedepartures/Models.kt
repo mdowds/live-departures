@@ -12,8 +12,11 @@ data class Arrival(val line: String, val destination: String, val arrivalTime: S
     )
 }
 
-data class StopPoint(val name: String) {
-    constructor(tflStopPoint: TflStopPoint) : this(stripRailStationFromName(tflStopPoint.commonName))
+data class StopPoint(val name: String, val indicator: String?) {
+    constructor(tflStopPoint: TflStopPoint) : this(
+            stripRailStationFromName(tflStopPoint.commonName),
+            tflStopPoint.indicator
+    )
 }
 
 private fun stripRailStationFromName(name: String): String = name.replace(" Rail Station", "")

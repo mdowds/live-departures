@@ -2,13 +2,14 @@ package com.mdowds.livedepartures
 
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.view.View
+import android.view.View.*
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.*
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters
 import kotlinx.android.synthetic.main.arrival_info.view.*
 import kotlinx.android.synthetic.main.stop_name.view.*
 
-class StopSection(val stopName: String, var arrivals: List<Arrival>) : Section(SectionParameters.builder()
+class StopSection(val stopName: String, val indicator: String?, var arrivals: List<Arrival>) : Section(SectionParameters.builder()
         .itemResourceId(R.layout.arrival_info)
         .headerResourceId(R.layout.stop_name)
         .loadingResourceId(R.layout.arrivals_loading)
@@ -20,6 +21,7 @@ class StopSection(val stopName: String, var arrivals: List<Arrival>) : Section(S
     override fun onBindHeaderViewHolder(holder: ViewHolder?) {
         (holder as StopNameViewHolder).run {
             setStopName(stopName)
+            setStopIndicator(indicator)
             setNoDeparturesMessage(arrivals.count() == 0 && state == LOADED)
         }
     }
@@ -40,8 +42,16 @@ class StopSection(val stopName: String, var arrivals: List<Arrival>) : Section(S
             view.stop_name.text = stopName
         }
 
+        fun setStopIndicator(stopIndicator: String?) {
+            if(stopIndicator.isNullOrEmpty()) {
+                view.stop_indicator.visibility = GONE
+            } else {
+                view.stop_indicator.text = stopIndicator
+            }
+        }
+
         fun setNoDeparturesMessage(isNoDepartures: Boolean) {
-            view.no_departures_text.visibility = if(isNoDepartures) View.VISIBLE else View.GONE
+            view.no_departures_text.visibility = if(isNoDepartures) VISIBLE else GONE
         }
     }
 

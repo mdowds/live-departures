@@ -42,7 +42,7 @@ class ArrivalsActivity : WearableActivity(), ArrivalsView {
     }
 
     override fun addStopSection(stopPoint: StopPoint): StopSection {
-        val stopSection = StopSection(stopPoint.name, listOf())
+        val stopSection = StopSection(stopPoint.name, stopPoint.indicator, listOf())
         stopSection.state = LOADING
         adapter.addSection(stopSection)
         adapter.notifyDataSetChanged()
