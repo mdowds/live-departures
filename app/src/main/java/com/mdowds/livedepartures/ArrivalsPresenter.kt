@@ -75,7 +75,7 @@ class ArrivalsPresenter(private val view: ArrivalsView,
             val newSection = view.addStopSection(StopPoint(tflStopPoint))
 
             val repeatedTask = object : TimerTask() {
-                override fun run() = requestArrivals(tflStopPoint, newSection)
+                override fun run() = requestArrivals(tflStopPoint, newSection, this)
             }
 
             val delay = 0L
@@ -86,10 +86,12 @@ class ArrivalsPresenter(private val view: ArrivalsView,
         view.hideLoadingSpinner()
     }
 
-    fun onArrivalsResponse(newResults: List<TflArrivalPrediction>, section: Section) {
+    fun onArrivalsResponse(newResults: List<TflArrivalPrediction>, section: Section, updateArrivalsTask: TimerTask) {
         val newResultsOrdered = newResults.sortedBy { it.timeToStation }
         val newArrivals = newResultsOrdered.take(5).map { Arrival(it) }
         view.updateResults(newArrivals, section)
+
+        if (newArrivals.isEmpty()) updateArrivalsTask.cancel()
     }
 
     private fun startLocationUpdates() = locationManager.startLocationUpdates(this::onLocationResponse)
@@ -99,9 +101,9 @@ class ArrivalsPresenter(private val view: ArrivalsView,
         return currentLocation.distanceTo(newLocation) > 10
     }
 
-    private fun requestArrivals(stopPoint: TflStopPoint, section: Section) {
+    private fun requestArrivals(stopPoint: TflStopPoint, section: Section, updateArrivalsTask: TimerTask) {
         api.getArrivals(stopPoint) {
-            onArrivalsResponse(it, section)
+            onArrivalsResponse(it, section, updateArrivalsTask)
         }
     }
 }

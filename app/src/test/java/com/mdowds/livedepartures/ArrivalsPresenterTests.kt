@@ -4,12 +4,14 @@ import android.content.pm.PackageManager.PERMISSION_GRANTED
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeLocation
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeTflArrivalPrediction
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeTflStopPoints
+import com.mdowds.livedepartures.networking.TflArrivalPrediction
 import com.mdowds.livedepartures.networking.TransportInfoApi
 import com.mdowds.livedepartures.utils.DevicePermissionsManager.Companion.PERMISSIONS_REQUEST_CODE
 import com.mdowds.livedepartures.utils.LocationManager
 import com.nhaarman.mockitokotlin2.*
 import org.junit.Before
 import org.junit.Test
+import java.sql.Time
 import java.util.*
 
 class ArrivalsPresenterTests {
@@ -32,6 +34,8 @@ class ArrivalsPresenterTests {
         verify(mockLocationManager).startLocationUpdates(any())
     }
 
+    //region onPause
+
     @Test
     fun `onPause stops location updates`() {
         presenter.onPause()
@@ -43,6 +47,10 @@ class ArrivalsPresenterTests {
         presenter.onPause()
         verify(mockTimer).purge()
     }
+
+    //endregion
+
+    //region onLocationResponse
 
     @Test
     fun `onLocationResponse requests nearby stops for first location response`() {
@@ -69,6 +77,10 @@ class ArrivalsPresenterTests {
         presenter.onLocationResponse(makeLocation(1.1, -1.0))
         verify(mockApi, times(2)).getNearbyStops(any(), any(), any())
     }
+
+    //endregion
+
+    //region onStopPointsResponse
 
     @Test
     fun `onStopPointsResponse creates a section on the view for each stop point`() {
@@ -123,10 +135,14 @@ class ArrivalsPresenterTests {
         verify(mockTimer).purge()
     }
 
+    //endregion
+
+    //region onArrivalsResponse
+
     @Test
     fun `onArrivalsResponse response updates the view with new items`() {
         val arrival = makeTflArrivalPrediction()
-        presenter.onArrivalsResponse(listOf(arrival), mock())
+        presenter.onArrivalsResponse(listOf(arrival), mock(), mock())
         verify(mockView).updateResults(argThat { count() == 1 }, any())
     }
 
@@ -134,16 +150,26 @@ class ArrivalsPresenterTests {
     fun `onArrivalsResponse orders the arrivals by time`() {
         val firstArrival = makeTflArrivalPrediction(120)
         val secondArrival = makeTflArrivalPrediction(180)
-        presenter.onArrivalsResponse(listOf(secondArrival, firstArrival), mock())
+        presenter.onArrivalsResponse(listOf(secondArrival, firstArrival), mock(), mock())
         verify(mockView).updateResults(argThat { first().arrivalTime == "2 mins" }, any())
     }
 
     @Test
     fun `onArrivalsResponse updates the view with a maximum of 5 arrivals`() {
         val arrivals = (1..10).map { makeTflArrivalPrediction() }
-        presenter.onArrivalsResponse(arrivals, mock())
+        presenter.onArrivalsResponse(arrivals, mock(), mock())
         verify(mockView).updateResults(argThat { count() == 5 }, any())
     }
+
+    @Test
+    fun `onArrivalsResponse cancels the update arrivals task when there are no arrivals`() {
+        val arrivals = listOf<TflArrivalPrediction>()
+        val mockTask = mock<TimerTask>()
+        presenter.onArrivalsResponse(arrivals, mock(), mockTask)
+        verify(mockTask).cancel()
+    }
+
+    //endregion
 
     @Test
     fun `onRequestPermissionsResult starts location updates if the permission was granted`() {
