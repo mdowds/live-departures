@@ -56,3 +56,22 @@ class FusedLocationManager(private val fusedLocationClient: FusedLocationProvide
     }
 }
 
+
+class FakeLocationManager: LocationManager {
+
+    private val locationToReturn = Location("").apply {
+        val asStrings = "51.583899, -0.020362"
+                .replace("\\s".toRegex(), "")
+                .split(",")
+
+        latitude = asStrings[0].toDouble()
+        longitude = asStrings[1].toDouble()
+    }
+
+    override fun startLocationUpdates(callback: LastLocationCallback) {
+        callback(locationToReturn)
+    }
+
+    override fun stopLocationUpdates() {}
+}
+

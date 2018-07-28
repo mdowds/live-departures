@@ -5,6 +5,7 @@ import android.location.Location
 import android.util.Log
 import com.mdowds.livedepartures.networking.*
 import com.mdowds.livedepartures.utils.DevicePermissionsManager.Companion.PERMISSIONS_REQUEST_CODE
+import com.mdowds.livedepartures.utils.FakeLocationManager
 import com.mdowds.livedepartures.utils.FusedLocationManager
 import com.mdowds.livedepartures.utils.LocationManager
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
@@ -20,7 +21,8 @@ class ArrivalsPresenter(private val view: ArrivalsView,
     companion object {
         fun create(view: ArrivalsActivity): ArrivalsPresenter {
             return ArrivalsPresenter(view,
-                    FusedLocationManager(view),
+//                    FusedLocationManager(view),
+                    FakeLocationManager(),
                     TflApi(RequestQueueSingleton.getInstance(view.applicationContext).requestQueue),
                     Timer("Arrival requests")
             )
@@ -70,11 +72,11 @@ class ArrivalsPresenter(private val view: ArrivalsView,
         view.removeStopSections()
         arrivalRequestsTimer.purge()
 
-        stopPoints.places.take(5).forEach {
-            val newSection = view.addStopSection(it)
+        stopPoints.places.take(5).forEach { stopPoint ->
+            val newSection = view.addStopSection(stopPoint)
 
             val repeatedTask = object : TimerTask() {
-                override fun run() = requestArrivals(it, newSection)
+                override fun run() = requestArrivals(stopPoint, newSection)
             }
 
             val delay = 0L

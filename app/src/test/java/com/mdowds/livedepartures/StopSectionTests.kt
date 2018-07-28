@@ -6,6 +6,7 @@ import com.mdowds.livedepartures.helpers.TestDataFactory.makeArrivalModel
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
+import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import kotlinx.android.synthetic.main.arrival_info.view.*
 import kotlinx.android.synthetic.main.stop_name.view.*
 import org.junit.Assert.*
@@ -35,6 +36,30 @@ class StopSectionTests {
         section.onBindHeaderViewHolder(holder)
 
         verify(mockViewContainer.stopName).text = "Stop name"
+    }
+
+    @Test
+    fun `onBindHeaderViewHolder shows the no departures text when arrivals is empty and section is loaded`() {
+        val section = StopSection("Stop name", listOf())
+        section.state = Section.State.LOADED
+        val mockViewContainer = MockStopNameViewContainer()
+        val holder = StopSection.StopNameViewHolder(mockViewContainer.view)
+
+        section.onBindHeaderViewHolder(holder)
+
+        verify(mockViewContainer.noDeparturesText).visibility = View.VISIBLE
+    }
+
+    @Test
+    fun `onBindHeaderViewHolder hides the no departures text when arrivals is empty and section is loading`() {
+        val section = StopSection("Stop name", listOf())
+        section.state = Section.State.LOADING
+        val mockViewContainer = MockStopNameViewContainer()
+        val holder = StopSection.StopNameViewHolder(mockViewContainer.view)
+
+        section.onBindHeaderViewHolder(holder)
+
+        verify(mockViewContainer.noDeparturesText).visibility = View.GONE
     }
 
     @Test
@@ -72,9 +97,11 @@ class StopSectionTests {
 
     class MockStopNameViewContainer {
         val stopName = mock<TextView>()
+        val noDeparturesText = mock<TextView>()
 
         val view = mock<View>{
             on { stop_name }.doReturn(stopName)
+            on { no_departures_text }.doReturn(noDeparturesText)
         }
     }
 }
