@@ -29,7 +29,7 @@ class ArrivalsPresenter(private val view: ArrivalsView,
     }
 
     fun onResume() {
-        if(currentLocation == null) view.showLoadingSpinner()
+        if (currentLocation == null) view.showLoadingSpinner()
         startLocationUpdates()
     }
 
@@ -61,7 +61,7 @@ class ArrivalsPresenter(private val view: ArrivalsView,
     }
 
     fun onLocationResponse(location: Location) {
-        if(!locationHasSignificantlyChanged(currentLocation, location)) return
+        if (!locationHasSignificantlyChanged(currentLocation, location)) return
 
         currentLocation = location
         api.getNearbyStops(location.latitude, location.longitude, this::onStopPointsResponse)
@@ -71,17 +71,13 @@ class ArrivalsPresenter(private val view: ArrivalsView,
         view.removeStopSections()
         arrivalRequestsTimer.purge()
 
-        stopPoints.places.take(5).forEach { tflStopPoint ->
-            val newSection = view.addStopSection(StopPoint(tflStopPoint))
-
-            val repeatedTask = object : TimerTask() {
-                override fun run() = requestArrivals(tflStopPoint, newSection, this)
-            }
-
-            val delay = 0L
-            val period = 10000L
-            arrivalRequestsTimer.scheduleAtFixedRate(repeatedTask, delay, period)
-        }
+        stopPoints.places
+                .filter { it.lines.isNotEmpty() }
+                .take(5)
+                .forEach { tflStopPoint ->
+                    val newSection = view.addStopSection(StopPoint(tflStopPoint))
+                    startArrivalsUpdates(tflStopPoint, newSection)
+                }
 
         view.hideLoadingSpinner()
     }
@@ -96,9 +92,19 @@ class ArrivalsPresenter(private val view: ArrivalsView,
 
     private fun startLocationUpdates() = locationManager.startLocationUpdates(this::onLocationResponse)
 
-    private fun locationHasSignificantlyChanged(currentLocation: Location? ,newLocation: Location) : Boolean {
+    private fun locationHasSignificantlyChanged(currentLocation: Location?, newLocation: Location): Boolean {
         currentLocation ?: return true
         return currentLocation.distanceTo(newLocation) > 10
+    }
+
+    private fun startArrivalsUpdates(tflStopPoint: TflStopPoint, stopSection: StopSection) {
+        val repeatedTask = object : TimerTask() {
+            override fun run() = requestArrivals(tflStopPoint, stopSection, this)
+        }
+
+        val delay = 0L
+        val period = 10000L
+        arrivalRequestsTimer.scheduleAtFixedRate(repeatedTask, delay, period)
     }
 
     private fun requestArrivals(stopPoint: TflStopPoint, section: Section, updateArrivalsTask: TimerTask) {

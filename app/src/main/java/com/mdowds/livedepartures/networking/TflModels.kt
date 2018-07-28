@@ -4,4 +4,4 @@ data class TflArrivalPrediction(val lineName: String, val destinationName: Strin
 
 data class TflStopPoints(val places: List<TflStopPoint>)
 
-data class TflStopPoint(val commonName: String, val naptanId: String, val indicator: String?)
+data class TflStopPoint(val commonName: String, val naptanId: String, val indicator: String?, val lines: List<Any>)

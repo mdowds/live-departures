@@ -22,7 +22,7 @@ object TestDataFactory {
         return TflStopPoints(stopPoints)
     }
 
-    fun makeTflStopPoint(): TflStopPoint = TflStopPoint("Name", "STOP", "Indicator")
+    fun makeTflStopPoint(): TflStopPoint = TflStopPoint("Name", "STOP", "Indicator", listOf("Line"))
 
     fun makeTflArrivalPrediction(time: Int = 1) : TflArrivalPrediction = TflArrivalPrediction("Line", "Destination", time)
 
