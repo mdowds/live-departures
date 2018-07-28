@@ -4,16 +4,15 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.wearable.activity.WearableActivity
 import android.view.View
-import com.mdowds.livedepartures.networking.*
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.*
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 import kotlinx.android.synthetic.main.arrivals_activity.*
 
 interface ArrivalsView {
-    fun addStopSection(stopPoint: TflStopPoint): StopSection
+    fun addStopSection(stopPoint: StopPoint): StopSection
     fun removeStopSections()
-    fun updateResults(newArrivals: List<ArrivalModel>, section: Section)
+    fun updateResults(newArrivals: List<Arrival>, section: Section)
     fun showLoadingSpinner()
     fun hideLoadingSpinner()
 }
@@ -42,8 +41,8 @@ class ArrivalsActivity : WearableActivity(), ArrivalsView {
         presenter.onPause()
     }
 
-    override fun addStopSection(stopPoint: TflStopPoint): StopSection {
-        val stopSection = StopSection(stopPoint.commonName, listOf())
+    override fun addStopSection(stopPoint: StopPoint): StopSection {
+        val stopSection = StopSection(stopPoint.name, listOf())
         stopSection.state = LOADING
         adapter.addSection(stopSection)
         adapter.notifyDataSetChanged()
@@ -52,7 +51,7 @@ class ArrivalsActivity : WearableActivity(), ArrivalsView {
 
     override fun removeStopSections() = adapter.removeAllSections()
 
-    override fun updateResults(newArrivals: List<ArrivalModel>, section: Section) {
+    override fun updateResults(newArrivals: List<Arrival>, section: Section) {
         (section as StopSection).arrivals = newArrivals
         section.state = LOADED
         adapter.notifyDataSetChanged()

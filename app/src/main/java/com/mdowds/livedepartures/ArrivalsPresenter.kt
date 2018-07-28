@@ -6,7 +6,6 @@ import android.util.Log
 import com.mdowds.livedepartures.networking.*
 import com.mdowds.livedepartures.utils.DevicePermissionsManager.Companion.PERMISSIONS_REQUEST_CODE
 import com.mdowds.livedepartures.utils.FakeLocationManager
-import com.mdowds.livedepartures.utils.FusedLocationManager
 import com.mdowds.livedepartures.utils.LocationManager
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import java.util.*
@@ -72,11 +71,11 @@ class ArrivalsPresenter(private val view: ArrivalsView,
         view.removeStopSections()
         arrivalRequestsTimer.purge()
 
-        stopPoints.places.take(5).forEach { stopPoint ->
-            val newSection = view.addStopSection(stopPoint)
+        stopPoints.places.take(5).forEach { tflStopPoint ->
+            val newSection = view.addStopSection(StopPoint(tflStopPoint))
 
             val repeatedTask = object : TimerTask() {
-                override fun run() = requestArrivals(stopPoint, newSection)
+                override fun run() = requestArrivals(tflStopPoint, newSection)
             }
 
             val delay = 0L
@@ -89,7 +88,7 @@ class ArrivalsPresenter(private val view: ArrivalsView,
 
     fun onArrivalsResponse(newResults: List<TflArrivalPrediction>, section: Section) {
         val newResultsOrdered = newResults.sortedBy { it.timeToStation }
-        val newArrivals = newResultsOrdered.take(5).map { ArrivalModel(it) }
+        val newArrivals = newResultsOrdered.take(5).map { Arrival(it) }
         view.updateResults(newArrivals, section)
     }
 

@@ -8,7 +8,7 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters
 import kotlinx.android.synthetic.main.arrival_info.view.*
 import kotlinx.android.synthetic.main.stop_name.view.*
 
-class StopSection(val stopName: String, var arrivals: List<ArrivalModel>) : Section(SectionParameters.builder()
+class StopSection(val stopName: String, var arrivals: List<Arrival>) : Section(SectionParameters.builder()
         .itemResourceId(R.layout.arrival_info)
         .headerResourceId(R.layout.stop_name)
         .loadingResourceId(R.layout.arrivals_loading)
@@ -47,10 +47,10 @@ class StopSection(val stopName: String, var arrivals: List<ArrivalModel>) : Sect
 
     class ArrivalInfoViewHolder(private val view: View) : ViewHolder(view) {
 
-        fun bindDepartureInfoModel(arrivalModel: ArrivalModel) {
-            view.route_name.text = arrivalModel.line
-            view.route_destination.text = arrivalModel.destination
-            view.arrival_time.text = arrivalModel.arrivalTime
+        fun bindDepartureInfoModel(arrival: Arrival) {
+            view.route_name.text = arrival.line
+            view.route_destination.text = arrival.destination
+            view.arrival_time.text = arrival.arrivalTime
         }
     }
 }
