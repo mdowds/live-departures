@@ -4,9 +4,8 @@ import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.location.Location
 import android.util.Log
 import com.mdowds.livedepartures.networking.*
+import com.mdowds.livedepartures.utils.*
 import com.mdowds.livedepartures.utils.DevicePermissionsManager.Companion.PERMISSIONS_REQUEST_CODE
-import com.mdowds.livedepartures.utils.FakeLocationManager
-import com.mdowds.livedepartures.utils.LocationManager
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import java.util.*
 
@@ -21,7 +20,7 @@ class ArrivalsPresenter(private val view: ArrivalsView,
         fun create(view: ArrivalsActivity): ArrivalsPresenter {
             return ArrivalsPresenter(view,
 //                    FusedLocationManager(view),
-                    FakeLocationManager(),
+                    FakeLocationManager("51.583899, -0.020362"),
                     TflApi(RequestQueueSingleton.getInstance(view.applicationContext).requestQueue),
                     Timer("Arrival requests")
             )

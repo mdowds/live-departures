@@ -56,11 +56,11 @@ class FusedLocationManager(private val fusedLocationClient: FusedLocationProvide
     }
 }
 
-
-class FakeLocationManager: LocationManager {
+// TODO remove this and use real location
+class FakeLocationManager(private val locationString: String): LocationManager {
 
     private val locationToReturn = Location("").apply {
-        val asStrings = "51.583899, -0.020362"
+        val asStrings = locationString
                 .replace("\\s".toRegex(), "")
                 .split(",")
 
