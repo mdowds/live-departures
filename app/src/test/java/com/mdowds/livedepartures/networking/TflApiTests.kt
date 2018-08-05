@@ -19,7 +19,7 @@ class TflApiTests {
     @Test
     fun `getNearbyStops makes a call to the correct endpoint`() {
         tflApi.getNearbyStops(0.1, 1.5) {}
-        verify(requestQueue).add(argThat<Request<String>> { url == "https://api.tfl.gov.uk/Place?type=NaptanRailStation,NaptanPublicBusCoachTram&lat=0.1&lon=1.5&radius=200"})
+        verify(requestQueue).add(argThat<Request<String>> { url == "https://api.tfl.gov.uk/Place?type=NaptanMetroStation,NaptanRailStation,NaptanPublicBusCoachTram&lat=0.1&lon=1.5&radius=200"})
     }
 
     @Test
