@@ -10,6 +10,7 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import java.util.*
 
 class ArrivalsPresenter(private val view: ArrivalsView,
+                        private val config: Config,
                         private val locationManager: LocationManager,
                         private val api: TransportInfoApi,
                         private val arrivalRequestsTimer: Timer) {
@@ -18,9 +19,14 @@ class ArrivalsPresenter(private val view: ArrivalsView,
 
     companion object {
         fun create(view: ArrivalsActivity): ArrivalsPresenter {
+
+            val config = AppConfig(view.resources).config
+            val locationManager = if (config.useFakeLocation) FakeLocationManager(config.fakeLocation)
+                else FusedLocationManager(view)
+
             return ArrivalsPresenter(view,
-//                    FusedLocationManager(view),
-                    FakeLocationManager("51.583899, -0.020362"),
+                    config,
+                    locationManager,
                     TflApi(RequestQueueSingleton.getInstance(view.applicationContext).requestQueue),
                     Timer("Arrival requests")
             )
@@ -72,7 +78,7 @@ class ArrivalsPresenter(private val view: ArrivalsView,
 
         stopPoints.places
                 .filter { it.lines.isNotEmpty() }
-                .take(5)
+                .take(config.stopsToShow)
                 .forEach { tflStopPoint ->
                     val newSection = view.addStopSection(StopPoint(tflStopPoint))
                     startArrivalsUpdates(tflStopPoint, newSection)
@@ -83,7 +89,7 @@ class ArrivalsPresenter(private val view: ArrivalsView,
 
     fun onArrivalsResponse(newResults: List<TflArrivalPrediction>, section: Section, updateArrivalsTask: TimerTask) {
         val newResultsOrdered = newResults.sortedBy { it.timeToStation }
-        val newArrivals = newResultsOrdered.take(5).map { Arrival(it) }
+        val newArrivals = newResultsOrdered.take(config.departuresPerStop).map { Arrival(it) }
         view.updateResults(newArrivals, section)
 
         if (newArrivals.isEmpty()) updateArrivalsTask.cancel()
@@ -93,7 +99,7 @@ class ArrivalsPresenter(private val view: ArrivalsView,
 
     private fun locationHasSignificantlyChanged(currentLocation: Location?, newLocation: Location): Boolean {
         currentLocation ?: return true
-        return currentLocation.distanceTo(newLocation) > 10
+        return currentLocation.distanceTo(newLocation) > config.distanceToFetchNewStopsInMetres
     }
 
     private fun startArrivalsUpdates(tflStopPoint: TflStopPoint, stopSection: StopSection) {
@@ -101,9 +107,8 @@ class ArrivalsPresenter(private val view: ArrivalsView,
             override fun run() = requestArrivals(tflStopPoint, stopSection, this)
         }
 
-        val delay = 0L
-        val period = 10000L
-        arrivalRequestsTimer.scheduleAtFixedRate(repeatedTask, delay, period)
+        val period = (config.arrivalsRefreshInSecs * 1000).toLong()
+        arrivalRequestsTimer.scheduleAtFixedRate(repeatedTask, 0L, period)
     }
 
     private fun requestArrivals(stopPoint: TflStopPoint, section: Section, updateArrivalsTask: TimerTask) {

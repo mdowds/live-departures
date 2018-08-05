@@ -1,6 +1,7 @@
 package com.mdowds.livedepartures
 
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import com.mdowds.livedepartures.helpers.TestDataFactory.makeConfig
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeLocation
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeTflArrivalPrediction
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeTflStopPoints
@@ -25,7 +26,7 @@ class ArrivalsPresenterTests {
 
     @Before
     fun setUp(){
-        presenter = ArrivalsPresenter(mockView, mockLocationManager, mockApi, mockTimer)
+        presenter = ArrivalsPresenter(mockView, makeConfig(), mockLocationManager, mockApi, mockTimer)
     }
 
     @Test

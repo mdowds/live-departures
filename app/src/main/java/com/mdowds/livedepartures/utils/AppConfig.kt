@@ -5,18 +5,18 @@ import com.google.gson.Gson
 import com.mdowds.livedepartures.R
 import java.io.InputStreamReader
 
-// TODO find better, non-singleton way to do this
-object AppConfig {
-
-    var resources: Resources? = null
+class AppConfig(private val resources: Resources) {
 
     val config: Config by lazy {
-        if (resources != null) {
-            val configFile = resources!!.openRawResource(R.raw.config)
-            val reader = InputStreamReader(configFile)
-            Gson().fromJson<Config>(reader, Config::class.java)
-        } else throw Exception("Resources not set")
+        val configFile = resources.openRawResource(R.raw.config)
+        val reader = InputStreamReader(configFile)
+        Gson().fromJson<Config>(reader, Config::class.java)
     }
 }
 
-data class Config(val useFakeLocation: Boolean, val fakeLocation: String)
+data class Config(val stopsToShow: Int,
+                  val departuresPerStop: Int,
+                  val arrivalsRefreshInSecs: Int,
+                  val distanceToFetchNewStopsInMetres: Int,
+                  val useFakeLocation: Boolean,
+                  val fakeLocation: String)

@@ -6,6 +6,7 @@ import com.mdowds.livedepartures.Arrival
 import com.mdowds.livedepartures.networking.TflArrivalPrediction
 import com.mdowds.livedepartures.networking.TflStopPoint
 import com.mdowds.livedepartures.networking.TflStopPoints
+import com.mdowds.livedepartures.utils.Config
 import com.nhaarman.mockitokotlin2.mock
 
 object TestDataFactory {
@@ -27,4 +28,6 @@ object TestDataFactory {
     fun makeTflArrivalPrediction(time: Int = 1) : TflArrivalPrediction = TflArrivalPrediction("Line", "Destination", time)
 
     fun makeArrivalModel() : Arrival = Arrival("Line", "Destination", "Arrival Time")
+
+    fun makeConfig() : Config = Config(5,5,10,10,false,"")
 }
