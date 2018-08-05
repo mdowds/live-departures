@@ -18,16 +18,16 @@ class ArrivalsPresenter(private val view: ArrivalsView,
     private var currentLocation: Location? = null
 
     companion object {
-        fun create(view: ArrivalsActivity): ArrivalsPresenter {
+        fun create(view: ArrivalsFragment): ArrivalsPresenter {
 
             val config = AppConfig(view.resources).config
             val locationManager = if (config.useFakeLocation) FakeLocationManager(config.fakeLocation)
-                else FusedLocationManager(view)
+                else FusedLocationManager(view.activity!!)
 
             return ArrivalsPresenter(view,
                     config,
                     locationManager,
-                    TflApi(RequestQueueSingleton.getInstance(view.applicationContext).requestQueue),
+                    TflApi(RequestQueueSingleton.getInstance(view.activity!!.applicationContext).requestQueue),
                     Timer("Arrival requests")
             )
         }

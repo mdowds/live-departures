@@ -1,13 +1,16 @@
 package com.mdowds.livedepartures
 
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.support.wearable.activity.WearableActivity
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
-import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.*
+import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.LOADED
+import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.LOADING
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
-import kotlinx.android.synthetic.main.arrivals_activity.*
+import kotlinx.android.synthetic.main.arrivals_fragment.*
 
 interface ArrivalsView {
     fun addStopSection(stopPoint: StopPoint): StopSection
@@ -17,16 +20,15 @@ interface ArrivalsView {
     fun hideLoadingSpinner()
 }
 
-class ArrivalsActivity : WearableActivity(), ArrivalsView {
+class ArrivalsFragment : Fragment(), ArrivalsView {
 
     private lateinit var presenter: ArrivalsPresenter
     private lateinit var adapter: SectionedRecyclerViewAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.arrivals_activity)
-        setAmbientEnabled()
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater.inflate(R.layout.arrivals_fragment, container, false)
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         presenter = ArrivalsPresenter.create(this)
         setUpRecyclerView()
     }
@@ -74,6 +76,6 @@ class ArrivalsActivity : WearableActivity(), ArrivalsView {
     private fun setUpRecyclerView() {
         adapter = SectionedRecyclerViewAdapter()
         arrivalsRecyclerView.adapter = adapter
-        arrivalsRecyclerView.layoutManager = LinearLayoutManager(this)
+        arrivalsRecyclerView.layoutManager = LinearLayoutManager(context)
     }
 }
