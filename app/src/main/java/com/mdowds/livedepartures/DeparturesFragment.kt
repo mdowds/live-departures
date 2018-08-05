@@ -10,26 +10,26 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.LOADED
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.LOADING
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
-import kotlinx.android.synthetic.main.arrivals_fragment.*
+import kotlinx.android.synthetic.main.departures_fragment.*
 
-interface ArrivalsView {
+interface DeparturesView {
     fun addStopSection(stopPoint: StopPoint): StopSection
     fun removeStopSections()
-    fun updateResults(newArrivals: List<Arrival>, section: Section)
+    fun updateResults(newDepartures: List<Departure>, section: Section)
     fun showLoadingSpinner()
     fun hideLoadingSpinner()
 }
 
-class ArrivalsFragment : Fragment(), ArrivalsView {
+class DeparturesFragment : Fragment(), DeparturesView {
 
-    private lateinit var presenter: ArrivalsPresenter
+    private lateinit var presenter: DeparturesPresenter
     private lateinit var adapter: SectionedRecyclerViewAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-            inflater.inflate(R.layout.arrivals_fragment, container, false)
+            inflater.inflate(R.layout.departures_fragment, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        presenter = ArrivalsPresenter.create(this)
+        presenter = DeparturesPresenter.create(this)
         setUpRecyclerView()
     }
 
@@ -53,20 +53,20 @@ class ArrivalsFragment : Fragment(), ArrivalsView {
 
     override fun removeStopSections() = adapter.removeAllSections()
 
-    override fun updateResults(newArrivals: List<Arrival>, section: Section) {
-        (section as StopSection).arrivals = newArrivals
+    override fun updateResults(newDepartures: List<Departure>, section: Section) {
+        (section as StopSection).departures = newDepartures
         section.state = LOADED
         adapter.notifyDataSetChanged()
     }
 
     override fun showLoadingSpinner() {
         fullScreenProgressBar.visibility = View.VISIBLE
-        arrivalsRecyclerView.visibility = View.GONE
+        departuresRecyclerView.visibility = View.GONE
     }
 
     override fun hideLoadingSpinner() {
         fullScreenProgressBar.visibility = View.GONE
-        arrivalsRecyclerView.visibility = View.VISIBLE
+        departuresRecyclerView.visibility = View.VISIBLE
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -75,7 +75,7 @@ class ArrivalsFragment : Fragment(), ArrivalsView {
 
     private fun setUpRecyclerView() {
         adapter = SectionedRecyclerViewAdapter()
-        arrivalsRecyclerView.adapter = adapter
-        arrivalsRecyclerView.layoutManager = LinearLayoutManager(context)
+        departuresRecyclerView.adapter = adapter
+        departuresRecyclerView.layoutManager = LinearLayoutManager(context)
     }
 }

@@ -12,21 +12,20 @@ import com.mdowds.livedepartures.utils.LocationManager
 import com.nhaarman.mockitokotlin2.*
 import org.junit.Before
 import org.junit.Test
-import java.sql.Time
 import java.util.*
 
-class ArrivalsPresenterTests {
+class DeparturesPresenterTests {
 
-    private val mockView = mock<ArrivalsView>()
+    private val mockView = mock<DeparturesView>()
     private val mockLocationManager = mock<LocationManager>()
     private val mockApi = mock<TransportInfoApi>()
     private val mockTimer = mock<Timer>()
 
-    private lateinit var presenter: ArrivalsPresenter
+    private lateinit var presenter: DeparturesPresenter
 
     @Before
     fun setUp(){
-        presenter = ArrivalsPresenter(mockView, makeConfig(), mockLocationManager, mockApi, mockTimer)
+        presenter = DeparturesPresenter(mockView, makeConfig(), mockLocationManager, mockApi, mockTimer)
     }
 
     @Test
@@ -148,22 +147,22 @@ class ArrivalsPresenterTests {
     }
 
     @Test
-    fun `onArrivalsResponse orders the arrivals by time`() {
+    fun `onArrivalsResponse orders the departures by time`() {
         val firstArrival = makeTflArrivalPrediction(120)
         val secondArrival = makeTflArrivalPrediction(180)
         presenter.onArrivalsResponse(listOf(secondArrival, firstArrival), mock(), mock())
-        verify(mockView).updateResults(argThat { first().arrivalTime == "2 mins" }, any())
+        verify(mockView).updateResults(argThat { first().departureTime == "2 mins" }, any())
     }
 
     @Test
-    fun `onArrivalsResponse updates the view with a maximum of 5 arrivals`() {
+    fun `onArrivalsResponse updates the view with a maximum of 5 departures`() {
         val arrivals = (1..10).map { makeTflArrivalPrediction() }
         presenter.onArrivalsResponse(arrivals, mock(), mock())
         verify(mockView).updateResults(argThat { count() == 5 }, any())
     }
 
     @Test
-    fun `onArrivalsResponse cancels the update arrivals task when there are no arrivals`() {
+    fun `onArrivalsResponse cancels the update arrivals task when the response contains no arrivals`() {
         val arrivals = listOf<TflArrivalPrediction>()
         val mockTask = mock<TimerTask>()
         presenter.onArrivalsResponse(arrivals, mock(), mockTask)

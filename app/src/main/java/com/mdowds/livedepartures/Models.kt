@@ -3,7 +3,7 @@ package com.mdowds.livedepartures
 import com.mdowds.livedepartures.networking.TflArrivalPrediction
 import com.mdowds.livedepartures.networking.TflStopPoint
 
-data class Arrival(val line: String, val destination: String, val arrivalTime: String) {
+data class Departure(val line: String, val destination: String, val departureTime: String) {
 
     constructor(tflArrivalPrediction: TflArrivalPrediction) : this(
             tflArrivalPrediction.lineName,

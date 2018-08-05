@@ -10,22 +10,22 @@ import android.support.v4.view.ViewPager
 
 class MainActivity : FragmentActivity() {
 
-    private lateinit var arrivalsPagerAdapter: ArrivalsPagerAdapter
+    private lateinit var departuresPagerAdapter: DeparturesPagerAdapter
     private lateinit var viewPager: ViewPager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        arrivalsPagerAdapter = ArrivalsPagerAdapter(supportFragmentManager)
+        departuresPagerAdapter = DeparturesPagerAdapter(supportFragmentManager)
         viewPager = findViewById(R.id.container)
-        viewPager.adapter = arrivalsPagerAdapter
+        viewPager.adapter = departuresPagerAdapter
     }
 
-    class ArrivalsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+    class DeparturesPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
         override fun getItem(position: Int): Fragment {
-            return ArrivalsFragment()
+            return DeparturesFragment()
         }
 
         override fun getCount(): Int {

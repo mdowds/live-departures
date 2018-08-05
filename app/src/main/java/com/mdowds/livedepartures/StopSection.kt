@@ -6,23 +6,23 @@ import android.view.View.*
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.*
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters
-import kotlinx.android.synthetic.main.arrival_info.view.*
+import kotlinx.android.synthetic.main.departure_info.view.*
 import kotlinx.android.synthetic.main.stop_name.view.*
 
-class StopSection(val stopName: String, val indicator: String?, var arrivals: List<Arrival>) : Section(SectionParameters.builder()
-        .itemResourceId(R.layout.arrival_info)
+class StopSection(val stopName: String, val indicator: String?, var departures: List<Departure>) : Section(SectionParameters.builder()
+        .itemResourceId(R.layout.departure_info)
         .headerResourceId(R.layout.stop_name)
-        .loadingResourceId(R.layout.arrivals_loading)
+        .loadingResourceId(R.layout.departures_loading)
         .build()) {
 
-    override fun getContentItemsTotal(): Int = arrivals.count()
+    override fun getContentItemsTotal(): Int = departures.count()
 
     // TODO handle a null view holder
     override fun onBindHeaderViewHolder(holder: ViewHolder?) {
         (holder as StopNameViewHolder).run {
             setStopName(stopName)
             setStopIndicator(indicator)
-            setNoDeparturesMessage(arrivals.count() == 0 && state == LOADED)
+            setNoDeparturesMessage(departures.count() == 0 && state == LOADED)
         }
     }
 
@@ -30,11 +30,11 @@ class StopSection(val stopName: String, val indicator: String?, var arrivals: Li
     override fun getHeaderViewHolder(view: View?): ViewHolder = StopNameViewHolder(view!!)
 
     // TODO handle a null view
-    override fun getItemViewHolder(view: View?): ViewHolder = ArrivalInfoViewHolder(view!!)
+    override fun getItemViewHolder(view: View?): ViewHolder = DepartureInfoViewHolder(view!!)
 
     // TODO handle a null view holder
     override fun onBindItemViewHolder(holder: ViewHolder?, position: Int) {
-        (holder as ArrivalInfoViewHolder).bindDepartureInfoModel(arrivals[position])
+        (holder as DepartureInfoViewHolder).bindDepartureInfoModel(departures[position])
     }
 
     class StopNameViewHolder(private var view: View) : ViewHolder(view) {
@@ -55,12 +55,12 @@ class StopSection(val stopName: String, val indicator: String?, var arrivals: Li
         }
     }
 
-    class ArrivalInfoViewHolder(private val view: View) : ViewHolder(view) {
+    class DepartureInfoViewHolder(private val view: View) : ViewHolder(view) {
 
-        fun bindDepartureInfoModel(arrival: Arrival) {
-            view.route_name.text = arrival.line
-            view.route_destination.text = arrival.destination
-            view.arrival_time.text = arrival.arrivalTime
+        fun bindDepartureInfoModel(departure: Departure) {
+            view.route_name.text = departure.line
+            view.route_destination.text = departure.destination
+            view.arrival_time.text = departure.departureTime
         }
     }
 }

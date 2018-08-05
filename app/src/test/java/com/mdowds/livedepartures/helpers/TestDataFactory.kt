@@ -2,7 +2,7 @@ package com.mdowds.livedepartures.helpers
 
 import android.location.Location
 import com.google.android.gms.location.LocationResult
-import com.mdowds.livedepartures.Arrival
+import com.mdowds.livedepartures.Departure
 import com.mdowds.livedepartures.networking.TflArrivalPrediction
 import com.mdowds.livedepartures.networking.TflStopPoint
 import com.mdowds.livedepartures.networking.TflStopPoints
@@ -27,7 +27,7 @@ object TestDataFactory {
 
     fun makeTflArrivalPrediction(time: Int = 1) : TflArrivalPrediction = TflArrivalPrediction("Line", "Destination", time)
 
-    fun makeArrivalModel() : Arrival = Arrival("Line", "Destination", "Arrival Time")
+    fun makeArrivalModel() : Departure = Departure("Line", "Destination", "Departure Time")
 
     fun makeConfig() : Config = Config(5,5,10,10,false,"")
 }

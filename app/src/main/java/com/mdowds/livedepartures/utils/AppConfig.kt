@@ -16,7 +16,7 @@ class AppConfig(private val resources: Resources) {
 
 data class Config(val stopsToShow: Int,
                   val departuresPerStop: Int,
-                  val arrivalsRefreshInSecs: Int,
+                  val departuresRefreshInSecs: Int,
                   val distanceToFetchNewStopsInMetres: Int,
                   val useFakeLocation: Boolean,
                   val fakeLocation: String)

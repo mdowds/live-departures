@@ -13,13 +13,13 @@
 
     <android.support.wear.widget.WearableRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/arrivalsRecyclerView"
+        android:id="@+id/departuresRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="50dp"
         android:paddingTop="20dp"
         android:scrollbars="vertical"
-        tools:context="com.mdowds.livedepartures.ArrivalsFragment"
+        tools:context="com.mdowds.livedepartures.DeparturesFragment"
         tools:deviceIds="wear" />
 
 </FrameLayout>

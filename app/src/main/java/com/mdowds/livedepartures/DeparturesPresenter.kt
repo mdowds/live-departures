@@ -9,26 +9,26 @@ import com.mdowds.livedepartures.utils.DevicePermissionsManager.Companion.PERMIS
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import java.util.*
 
-class ArrivalsPresenter(private val view: ArrivalsView,
-                        private val config: Config,
-                        private val locationManager: LocationManager,
-                        private val api: TransportInfoApi,
-                        private val arrivalRequestsTimer: Timer) {
+class DeparturesPresenter(private val view: DeparturesView,
+                          private val config: Config,
+                          private val locationManager: LocationManager,
+                          private val api: TransportInfoApi,
+                          private val arrivalRequestsTimer: Timer) {
 
     private var currentLocation: Location? = null
 
     companion object {
-        fun create(view: ArrivalsFragment): ArrivalsPresenter {
+        fun create(view: DeparturesFragment): DeparturesPresenter {
 
             val config = AppConfig(view.resources).config
             val locationManager = if (config.useFakeLocation) FakeLocationManager(config.fakeLocation)
                 else FusedLocationManager(view.activity!!)
 
-            return ArrivalsPresenter(view,
+            return DeparturesPresenter(view,
                     config,
                     locationManager,
                     TflApi(RequestQueueSingleton.getInstance(view.activity!!.applicationContext).requestQueue),
-                    Timer("Arrival requests")
+                    Timer("Departure requests")
             )
         }
     }
@@ -89,10 +89,10 @@ class ArrivalsPresenter(private val view: ArrivalsView,
 
     fun onArrivalsResponse(newResults: List<TflArrivalPrediction>, section: Section, updateArrivalsTask: TimerTask) {
         val newResultsOrdered = newResults.sortedBy { it.timeToStation }
-        val newArrivals = newResultsOrdered.take(config.departuresPerStop).map { Arrival(it) }
-        view.updateResults(newArrivals, section)
+        val newDepartures = newResultsOrdered.take(config.departuresPerStop).map { Departure(it) }
+        view.updateResults(newDepartures, section)
 
-        if (newArrivals.isEmpty()) updateArrivalsTask.cancel()
+        if (newDepartures.isEmpty()) updateArrivalsTask.cancel()
     }
 
     private fun startLocationUpdates() = locationManager.startLocationUpdates(this::onLocationResponse)
@@ -107,7 +107,7 @@ class ArrivalsPresenter(private val view: ArrivalsView,
             override fun run() = requestArrivals(tflStopPoint, stopSection, this)
         }
 
-        val period = (config.arrivalsRefreshInSecs * 1000).toLong()
+        val period = (config.departuresRefreshInSecs * 1000).toLong()
         arrivalRequestsTimer.scheduleAtFixedRate(repeatedTask, 0L, period)
     }
 

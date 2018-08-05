@@ -7,7 +7,7 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
-import kotlinx.android.synthetic.main.arrival_info.view.*
+import kotlinx.android.synthetic.main.departure_info.view.*
 import kotlinx.android.synthetic.main.stop_name.view.*
 import org.junit.Assert.*
 import org.junit.Test
@@ -53,7 +53,7 @@ class StopSectionTests {
     }
 
     @Test
-    fun `onBindHeaderViewHolder shows the no departures text when arrivals is empty and section is loaded`() {
+    fun `onBindHeaderViewHolder shows the no departures text when departures is empty and section is loaded`() {
         val section = StopSection("Stop name", "", listOf())
         section.state = Section.State.LOADED
         val mockViewContainer = MockStopNameViewContainer()
@@ -65,7 +65,7 @@ class StopSectionTests {
     }
 
     @Test
-    fun `onBindHeaderViewHolder hides the no departures text when arrivals is empty and section is loading`() {
+    fun `onBindHeaderViewHolder hides the no departures text when departures is empty and section is loading`() {
         val section = StopSection("Stop name", "", listOf())
         section.state = Section.State.LOADING
         val mockViewContainer = MockStopNameViewContainer()
@@ -82,7 +82,7 @@ class StopSectionTests {
     fun `getItemViewHolder returns an ArrivalInfoViewHolder`() {
         val section = StopSection("", "", listOf())
         val holder = section.getItemViewHolder(mock())
-        assertTrue(holder is StopSection.ArrivalInfoViewHolder)
+        assertTrue(holder is StopSection.DepartureInfoViewHolder)
     }
 
     @Test
@@ -90,13 +90,13 @@ class StopSectionTests {
         val model = makeArrivalModel()
         val section = StopSection("", "", listOf(model))
         val mockViewContainer = MockArrivalInfoViewContainer()
-        val holder = StopSection.ArrivalInfoViewHolder(mockViewContainer.view)
+        val holder = StopSection.DepartureInfoViewHolder(mockViewContainer.view)
 
         section.onBindItemViewHolder(holder, 0)
 
         verify(mockViewContainer.routeName).text = "Line"
         verify(mockViewContainer.routeDestination).text = "Destination"
-        verify(mockViewContainer.arrivalTime).text = "Arrival Time"
+        verify(mockViewContainer.arrivalTime).text = "Departure Time"
     }
     
     class MockArrivalInfoViewContainer {
