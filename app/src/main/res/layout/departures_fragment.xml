@@ -19,7 +19,7 @@
         android:paddingBottom="50dp"
         android:paddingTop="20dp"
         android:scrollbars="vertical"
-        tools:context="com.mdowds.livedepartures.DeparturesFragment"
+        tools:context="com.mdowds.livedepartures.departurespage.DeparturesFragment"
         tools:deviceIds="wear" />
 
 </FrameLayout>

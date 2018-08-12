@@ -1,5 +1,6 @@
-package com.mdowds.livedepartures
+package com.mdowds.livedepartures.departurespage
 
+import com.mdowds.livedepartures.NearbyStopPointsDataSource
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeConfig
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeTflArrivalPrediction
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeTflStopPoints

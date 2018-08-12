@@ -1,8 +1,10 @@
-package com.mdowds.livedepartures
+package com.mdowds.livedepartures.departurespage
 
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.view.View
 import android.view.View.*
+import com.mdowds.livedepartures.Departure
+import com.mdowds.livedepartures.R
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.*
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters

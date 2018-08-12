@@ -1,4 +1,4 @@
-package com.mdowds.livedepartures
+package com.mdowds.livedepartures.departurespage
 
 import android.view.View
 import android.widget.TextView

@@ -1,5 +1,6 @@
-package com.mdowds.livedepartures
+package com.mdowds.livedepartures.departurespage
 
+import com.mdowds.livedepartures.Departure
 import com.mdowds.livedepartures.networking.TflArrivalPrediction
 import org.junit.Test
 import org.junit.Assert.*

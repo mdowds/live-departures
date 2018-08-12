@@ -1,5 +1,8 @@
-package com.mdowds.livedepartures
+package com.mdowds.livedepartures.departurespage
 
+import com.mdowds.livedepartures.Departure
+import com.mdowds.livedepartures.NearbyStopPointsDataSource
+import com.mdowds.livedepartures.StopPoint
 import com.mdowds.livedepartures.networking.*
 import com.mdowds.livedepartures.utils.AppConfig
 import com.mdowds.livedepartures.utils.Config

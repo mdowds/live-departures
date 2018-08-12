@@ -3,6 +3,7 @@ package com.mdowds.livedepartures
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import com.mdowds.livedepartures.departurespage.DeparturesFragment
 
 class MainPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
@@ -15,5 +16,4 @@ class MainPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
     override fun getCount(): Int = modes.count()
 
     override fun getPageTitle(position: Int): CharSequence? = modes[position]
-
 }

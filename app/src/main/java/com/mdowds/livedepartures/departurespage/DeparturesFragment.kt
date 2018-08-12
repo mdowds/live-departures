@@ -1,4 +1,4 @@
-package com.mdowds.livedepartures
+package com.mdowds.livedepartures.departurespage
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -6,8 +6,10 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.mdowds.livedepartures.networking.TflStopPoints
-import com.mdowds.livedepartures.utils.Observable
+import com.mdowds.livedepartures.Departure
+import com.mdowds.livedepartures.MainActivity
+import com.mdowds.livedepartures.R
+import com.mdowds.livedepartures.StopPoint
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.LOADED
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.LOADING
