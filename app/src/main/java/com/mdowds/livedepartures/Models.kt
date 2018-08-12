@@ -1,5 +1,6 @@
 package com.mdowds.livedepartures
 
+import android.graphics.Color
 import com.mdowds.livedepartures.networking.TflArrivalPrediction
 import com.mdowds.livedepartures.networking.TflStopPoint
 
@@ -17,6 +18,12 @@ data class StopPoint(val name: String, val indicator: String?) {
             convertStationName(tflStopPoint.commonName),
             tflStopPoint.indicator
     )
+}
+
+enum class Mode(val tflName: String, val color: Int) {
+    Bus("bus", Color.rgb(220, 36, 31)),
+    Tube("tube", Color.rgb(0, 25, 168)),
+    Overground("overground", Color.rgb(239, 123, 16));
 }
 
 private fun convertStationName(name: String): String {
