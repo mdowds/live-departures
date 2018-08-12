@@ -23,7 +23,7 @@ interface DeparturesView {
 
 class DeparturesFragment : Fragment(), DeparturesView {
 
-    var mode: Mode = Mode.All
+    var mode: Mode? = null
 
     private lateinit var presenter: DeparturesPresenter
     private lateinit var adapter: SectionedRecyclerViewAdapter

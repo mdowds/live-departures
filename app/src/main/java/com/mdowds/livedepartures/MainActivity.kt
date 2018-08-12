@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentActivity
 import android.support.v4.view.ViewPager
 import android.util.Log
 import com.mdowds.livedepartures.utils.DevicePermissionsManager.Companion.PERMISSIONS_REQUEST_CODE
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : FragmentActivity() {
 
@@ -18,11 +19,8 @@ class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         dataSource = NearbyStopPointsDataSource.create(this)
-        pagerAdapter = MainPagerAdapter(supportFragmentManager)
-        viewPager = findViewById(R.id.container)
-        viewPager.adapter = pagerAdapter
+        setUpViewPager()
     }
 
     override fun onResume() {
@@ -55,5 +53,22 @@ class MainActivity : FragmentActivity() {
                 }
             }
         }
+    }
+
+    private fun setUpViewPager() {
+        pagerAdapter = MainPagerAdapter(supportFragmentManager)
+        viewPager = findViewById(R.id.container)
+        viewPager.adapter = pagerAdapter
+
+        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageSelected(position: Int) {
+                pager_header.setBackgroundColor(Mode.values()[position].color)
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {}
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+        })
+
+        pager_header.setBackgroundColor(Mode.values()[0].color)
     }
 }

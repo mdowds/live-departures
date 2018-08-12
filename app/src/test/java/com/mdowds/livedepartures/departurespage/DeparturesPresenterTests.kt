@@ -121,6 +121,18 @@ class DeparturesPresenterTests {
         verify(mockView, times(1)).addStopSection(any())
     }
 
+    @Test
+    fun `updateStopPoints doesn't filter points based on mode if mode is null`() {
+        val presenter = DeparturesPresenter(mockView, null, makeConfig(), mockApi, mockTimer, mockDataSource)
+        val stopPoints = TflStopPoints(listOf(
+                makeTflStopPoint(listOf(Mode.Bus, Mode.Tube)),
+                makeTflStopPoint(listOf(Mode.Tube))
+        ))
+        presenter.updateStopPoints(stopPoints)
+
+        verify(mockView, times(2)).addStopSection(any())
+    }
+
     //endregion
 
     //region onArrivalsResponse
@@ -163,6 +175,17 @@ class DeparturesPresenterTests {
         )
         presenter.onArrivalsResponse(arrivals, mock(), mock())
         verify(mockView).updateResults(argThat { count() == 1 }, any())
+    }
+
+    @Test
+    fun `onArrivalsResponse doesn't filter based on mode if node is null`() {
+        val presenter = DeparturesPresenter(mockView, null, makeConfig(), mockApi, mockTimer, mockDataSource)
+        val arrivals = listOf(
+                makeTflArrivalPrediction(mode = Mode.Bus),
+                makeTflArrivalPrediction(mode = Mode.Tube)
+        )
+        presenter.onArrivalsResponse(arrivals, mock(), mock())
+        verify(mockView).updateResults(argThat { count() == 2 }, any())
     }
 
     //endregion
