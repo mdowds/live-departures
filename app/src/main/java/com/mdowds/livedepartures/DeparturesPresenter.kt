@@ -1,82 +1,65 @@
 package com.mdowds.livedepartures
 
-import android.content.pm.PackageManager.PERMISSION_GRANTED
-import android.location.Location
-import android.util.Log
 import com.mdowds.livedepartures.networking.*
-import com.mdowds.livedepartures.utils.*
-import com.mdowds.livedepartures.utils.DevicePermissionsManager.Companion.PERMISSIONS_REQUEST_CODE
+import com.mdowds.livedepartures.utils.AppConfig
+import com.mdowds.livedepartures.utils.Config
+import com.mdowds.livedepartures.utils.Observer
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import java.util.*
 
 class DeparturesPresenter(private val view: DeparturesView,
                           private val config: Config,
-                          private val locationManager: LocationManager,
                           private val api: TransportInfoApi,
-                          private val arrivalRequestsTimer: Timer) {
-
-    private var currentLocation: Location? = null
+                          private val arrivalRequestsTimer: Timer,
+                          private val stopPointsDataSource: NearbyStopPointsDataSource): Observer<TflStopPoints> {
 
     companion object {
-        fun create(view: DeparturesFragment): DeparturesPresenter {
+        fun create(view: DeparturesFragment, stopPointsDataSource: NearbyStopPointsDataSource): DeparturesPresenter {
 
             val config = AppConfig(view.resources).config
-            val locationManager = if (config.useFakeLocation) FakeLocationManager(config.fakeLocation)
-                else FusedLocationManager(view.activity!!)
 
             return DeparturesPresenter(view,
                     config,
-                    locationManager,
                     TflApi(RequestQueueSingleton.getInstance(view.activity!!.applicationContext).requestQueue),
-                    Timer("Departure requests")
+                    Timer("Departure requests"),
+                    stopPointsDataSource
             )
         }
     }
 
+    init {
+        stopPointsDataSource.addObserver(this)
+        val stopPoints = stopPointsDataSource.currentStopPoints
+        if(stopPoints != null) updateStopPoints(stopPoints)
+    }
+
     fun onResume() {
-        if (currentLocation == null) view.showLoadingSpinner()
-        startLocationUpdates()
+        if (stopPointsDataSource.currentStopPoints == null) view.showLoadingSpinner()
     }
 
     fun onPause() {
-        locationManager.stopLocationUpdates()
-        arrivalRequestsTimer.purge()
+        stopArrivalsUpdates()
     }
 
-    fun onRequestPermissionsResult(requestCode: Int, grantResults: IntArray) {
-        if (requestCode == PERMISSIONS_REQUEST_CODE) {
-            when {
-                grantResults.isEmpty() -> Log.i("Permissions result", "User interaction was cancelled.")
-                (grantResults[0] == PERMISSION_GRANTED) -> startLocationUpdates()
-                else -> {
-                    // TODO show message with link to settings if permission rejected
-//                    showSnackbar(R.string.permission_denied_explanation, R.string.settings,
-//                            View.OnClickListener {
-//                                // Build intent that displays the App settings screen.
-//                                val intent = Intent().apply {
-//                                    action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-//                                    data = Uri.fromParts("package", APPLICATION_ID, null)
-//                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-//                                }
-//                                startActivity(intent)
-//                            })
-                }
-            }
-        }
+    fun onStop() = stopPointsDataSource.removeObserver(this)
+
+    override fun update(message: TflStopPoints) = updateStopPoints(message)
+
+    fun onArrivalsResponse(newResults: List<TflArrivalPrediction>, section: Section, updateArrivalsTask: TimerTask) {
+        val newResultsOrdered = newResults.sortedBy { it.timeToStation }
+        val newDepartures = newResultsOrdered.take(config.departuresPerStop).map { Departure(it) }
+        view.updateResults(newDepartures, section)
+
+        if (newDepartures.isEmpty()) updateArrivalsTask.cancel()
     }
 
-    fun onLocationResponse(location: Location) {
-        if (!locationHasSignificantlyChanged(currentLocation, location)) return
+    private fun updateStopPoints(tflStopPoints: TflStopPoints) {
 
-        currentLocation = location
-        api.getNearbyStops(location.latitude, location.longitude, this::onStopPointsResponse)
-    }
-
-    fun onStopPointsResponse(stopPoints: TflStopPoints) {
+        stopArrivalsUpdates()
         view.removeStopSections()
-        arrivalRequestsTimer.purge()
 
-        stopPoints.places
+        // TODO pass in the relevant mode on creation and filter out here
+        tflStopPoints.places
                 .filter { it.lines.isNotEmpty() }
                 .take(config.stopsToShow)
                 .forEach { tflStopPoint ->
@@ -87,21 +70,6 @@ class DeparturesPresenter(private val view: DeparturesView,
         view.hideLoadingSpinner()
     }
 
-    fun onArrivalsResponse(newResults: List<TflArrivalPrediction>, section: Section, updateArrivalsTask: TimerTask) {
-        val newResultsOrdered = newResults.sortedBy { it.timeToStation }
-        val newDepartures = newResultsOrdered.take(config.departuresPerStop).map { Departure(it) }
-        view.updateResults(newDepartures, section)
-
-        if (newDepartures.isEmpty()) updateArrivalsTask.cancel()
-    }
-
-    private fun startLocationUpdates() = locationManager.startLocationUpdates(this::onLocationResponse)
-
-    private fun locationHasSignificantlyChanged(currentLocation: Location?, newLocation: Location): Boolean {
-        currentLocation ?: return true
-        return currentLocation.distanceTo(newLocation) > config.distanceToFetchNewStopsInMetres
-    }
-
     private fun startArrivalsUpdates(tflStopPoint: TflStopPoint, stopSection: StopSection) {
         val repeatedTask = object : TimerTask() {
             override fun run() = requestArrivals(tflStopPoint, stopSection, this)
@@ -110,6 +78,8 @@ class DeparturesPresenter(private val view: DeparturesView,
         val period = (config.departuresRefreshInSecs * 1000).toLong()
         arrivalRequestsTimer.scheduleAtFixedRate(repeatedTask, 0L, period)
     }
+
+    private fun stopArrivalsUpdates() = arrivalRequestsTimer.purge()
 
     private fun requestArrivals(stopPoint: TflStopPoint, section: Section, updateArrivalsTask: TimerTask) {
         api.getArrivals(stopPoint) {

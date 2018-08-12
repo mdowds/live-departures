@@ -6,6 +6,8 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.mdowds.livedepartures.networking.TflStopPoints
+import com.mdowds.livedepartures.utils.Observable
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.LOADED
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.LOADING
@@ -29,8 +31,8 @@ class DeparturesFragment : Fragment(), DeparturesView {
             inflater.inflate(R.layout.departures_fragment, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        presenter = DeparturesPresenter.create(this)
         setUpRecyclerView()
+        presenter = DeparturesPresenter.create(this, (activity as MainActivity).dataSource)
     }
 
     override fun onResume() {
@@ -41,6 +43,11 @@ class DeparturesFragment : Fragment(), DeparturesView {
     override fun onPause() {
         super.onPause()
         presenter.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        presenter.onStop()
     }
 
     override fun addStopSection(stopPoint: StopPoint): StopSection {
@@ -67,10 +74,6 @@ class DeparturesFragment : Fragment(), DeparturesView {
     override fun hideLoadingSpinner() {
         fullScreenProgressBar.visibility = View.GONE
         departuresRecyclerView.visibility = View.VISIBLE
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        presenter.onRequestPermissionsResult(requestCode, grantResults)
     }
 
     private fun setUpRecyclerView() {

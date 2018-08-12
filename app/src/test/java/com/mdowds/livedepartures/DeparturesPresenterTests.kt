@@ -1,13 +1,10 @@
 package com.mdowds.livedepartures
 
-import android.content.pm.PackageManager.PERMISSION_GRANTED
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeConfig
-import com.mdowds.livedepartures.helpers.TestDataFactory.makeLocation
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeTflArrivalPrediction
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeTflStopPoints
 import com.mdowds.livedepartures.networking.TflArrivalPrediction
 import com.mdowds.livedepartures.networking.TransportInfoApi
-import com.mdowds.livedepartures.utils.DevicePermissionsManager.Companion.PERMISSIONS_REQUEST_CODE
 import com.mdowds.livedepartures.utils.LocationManager
 import com.nhaarman.mockitokotlin2.*
 import org.junit.Before
@@ -20,27 +17,33 @@ class DeparturesPresenterTests {
     private val mockLocationManager = mock<LocationManager>()
     private val mockApi = mock<TransportInfoApi>()
     private val mockTimer = mock<Timer>()
+    private val mockDataSource = NearbyStopPointsDataSource(makeConfig(), mock(), mock())
 
     private lateinit var presenter: DeparturesPresenter
 
     @Before
     fun setUp(){
-        presenter = DeparturesPresenter(mockView, makeConfig(), mockLocationManager, mockApi, mockTimer)
+        presenter = DeparturesPresenter(mockView, makeConfig(), mockApi, mockTimer, mockDataSource)
+    }
+
+    //region onResume
+
+    @Test
+    fun `onResume shows loading spinner if there are no current stop points`() {
+        presenter.onResume()
+        verify(mockView).showLoadingSpinner()
     }
 
     @Test
-    fun `onResume starts location updates`() {
+    fun `onResume does not show loading spinner if there are current stop points`() {
+        mockDataSource.onStopPointsResponse(makeTflStopPoints())
         presenter.onResume()
-        verify(mockLocationManager).startLocationUpdates(any())
+        verify(mockView, never()).showLoadingSpinner()
     }
+
+    // endregion
 
     //region onPause
-
-    @Test
-    fun `onPause stops location updates`() {
-        presenter.onPause()
-        verify(mockLocationManager).stopLocationUpdates()
-    }
 
     @Test
     fun `onPause stops arrivals requests`() {
@@ -50,63 +53,33 @@ class DeparturesPresenterTests {
 
     //endregion
 
-    //region onLocationResponse
+    //region update
 
     @Test
-    fun `onLocationResponse requests nearby stops for first location response`() {
-        presenter.onLocationResponse(makeLocation(1.0, -1.0))
-        verify(mockApi).getNearbyStops(eq(1.0), eq(-1.0), any())
-    }
-
-    @Test
-    fun `onLocationResponse doesn't request nearby stops if location has changed by less than 10 metres`() {
-        val originalLocation = makeLocation(1.0, -1.0)
-        whenever(originalLocation.distanceTo(any())).thenReturn(2.0f)
-
-        presenter.onLocationResponse(originalLocation)
-        presenter.onLocationResponse(makeLocation(1.0, -1.0))
-        verify(mockApi, times(1)).getNearbyStops(any(), any(), any())
-    }
-
-    @Test
-    fun `onLocationResponse does request nearby stops if location has changed by more than 10 metres`() {
-        val originalLocation = makeLocation(1.0, -1.0)
-        whenever(originalLocation.distanceTo(any())).thenReturn(11.0f)
-
-        presenter.onLocationResponse(originalLocation)
-        presenter.onLocationResponse(makeLocation(1.1, -1.0))
-        verify(mockApi, times(2)).getNearbyStops(any(), any(), any())
-    }
-
-    //endregion
-
-    //region onStopPointsResponse
-
-    @Test
-    fun `onStopPointsResponse creates a section on the view for each stop point`() {
+    fun `update creates a section on the view for each stop point`() {
         val stopPoints = makeTflStopPoints()
-        presenter.onStopPointsResponse(stopPoints)
+        presenter.update(stopPoints)
         verify(mockView, times(stopPoints.places.count())).addStopSection(any())
     }
 
     @Test
-    fun `onStopPointsResponse creates a maximum of 5 sections on the view`() {
+    fun `update creates a maximum of 5 sections on the view`() {
         val stopPoints = makeTflStopPoints(10)
-        presenter.onStopPointsResponse(stopPoints)
+        presenter.update(stopPoints)
         verify(mockView, times(5)).addStopSection(any())
     }
 
     @Test
-    fun `onStopPointsResponse triggers a TimerTask for each stop point every 10 seconds`() {
+    fun `update triggers a TimerTask for each stop point every 10 seconds`() {
         val stopPoints = makeTflStopPoints()
-        presenter.onStopPointsResponse(stopPoints)
+        presenter.update(stopPoints)
         verify(mockTimer, times(stopPoints.places.count())).scheduleAtFixedRate(any(), eq(0L), eq(10000L))
     }
 
     @Test
-    fun `onStopPointsResponse passes a TimerTask that makes an arrivals request`() {
+    fun `update passes a TimerTask that makes an arrivals request`() {
         val stopPoints = makeTflStopPoints()
-        presenter.onStopPointsResponse(stopPoints)
+        presenter.update(stopPoints)
 
         argumentCaptor<TimerTask>().apply {
             verify(mockTimer).scheduleAtFixedRate(capture(), any<Long>(), any())
@@ -117,21 +90,21 @@ class DeparturesPresenterTests {
     }
 
     @Test
-    fun `onStopPointsResponse triggers a maximum of 5 TimerTasks`() {
+    fun `update triggers a maximum of 5 TimerTasks`() {
         val stopPoints = makeTflStopPoints(10)
-        presenter.onStopPointsResponse(stopPoints)
+        presenter.update(stopPoints)
         verify(mockTimer, times(5)).scheduleAtFixedRate(any(), any<Long>(), any())
     }
 
     @Test
-    fun `onStopPointsResponse clears the current sections in the view`() {
-        presenter.onStopPointsResponse(makeTflStopPoints())
+    fun `update clears the current sections in the view`() {
+        presenter.update(makeTflStopPoints())
         verify(mockView).removeStopSections()
     }
 
     @Test
-    fun `onStopPointsResponse cancels all existing TimerTasks for arrivals requests`() {
-        presenter.onStopPointsResponse(makeTflStopPoints())
+    fun `update cancels all existing TimerTasks for arrivals requests`() {
+        presenter.update(makeTflStopPoints())
         verify(mockTimer).purge()
     }
 
@@ -170,11 +143,4 @@ class DeparturesPresenterTests {
     }
 
     //endregion
-
-    @Test
-    fun `onRequestPermissionsResult starts location updates if the permission was granted`() {
-        presenter.onRequestPermissionsResult(PERMISSIONS_REQUEST_CODE, intArrayOf(PERMISSION_GRANTED))
-
-        verify(mockLocationManager).startLocationUpdates(any())
-    }
 }
