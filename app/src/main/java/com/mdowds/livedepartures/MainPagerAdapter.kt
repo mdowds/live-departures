@@ -2,10 +2,10 @@ package com.mdowds.livedepartures
 
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.app.FragmentStatePagerAdapter
 import com.mdowds.livedepartures.departurespage.DeparturesFragment
 
-class MainPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+class MainPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
 
     private val modes = Mode.values().drop(1)
 
