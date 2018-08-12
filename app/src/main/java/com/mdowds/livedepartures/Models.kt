@@ -7,19 +7,23 @@ data class Departure(val line: String, val destination: String, val departureTim
 
     constructor(tflArrivalPrediction: TflArrivalPrediction) : this(
             tflArrivalPrediction.lineName,
-            stripRailStationFromName(tflArrivalPrediction.destinationName),
+            convertStationName(tflArrivalPrediction.destinationName),
             formatArrivalTime(tflArrivalPrediction.timeToStation)
     )
 }
 
 data class StopPoint(val name: String, val indicator: String?) {
     constructor(tflStopPoint: TflStopPoint) : this(
-            stripRailStationFromName(tflStopPoint.commonName),
+            convertStationName(tflStopPoint.commonName),
             tflStopPoint.indicator
     )
 }
 
-private fun stripRailStationFromName(name: String): String = name.replace(" Rail Station", "")
+private fun convertStationName(name: String): String {
+    return listOf(" Rail Station", " Underground Station").fold(name) { currentName, textToReplace ->
+        currentName.replace(textToReplace, "")
+    }
+}
 
 private fun formatArrivalTime(arrivalInSeconds: Int): String {
     val arrivalInMinutes = (arrivalInSeconds / 60)

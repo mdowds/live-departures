@@ -27,6 +27,14 @@ class DepartureTests {
     }
 
     @Test
+    fun `Strips "Underground Station" from destination name`() {
+        val arrivalPrediction = TflArrivalPrediction("Piccadilly Line", "Cockfosters Underground Station", 130, Mode.Tube.tflName)
+        val arrivalInfoModel = Departure(arrivalPrediction)
+
+        assertEquals("Cockfosters", arrivalInfoModel.destination)
+    }
+
+    @Test
     fun `Converts arrival time to minutes`() {
         val arrivalInfoModel = Departure(arrivalPrediction)
 
