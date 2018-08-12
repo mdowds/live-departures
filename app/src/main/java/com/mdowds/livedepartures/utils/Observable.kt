@@ -1,23 +1,18 @@
 package com.mdowds.livedepartures.utils
 
-// TODO look at using callbacks rather than a list of objects
-interface Observer<T> {
-    fun update(message: T)
-}
+private typealias ObserverFunction<T> = (T) -> Unit
 
 abstract class Observable<T> {
 
-    private val observers = mutableListOf<Observer<T>>()
+    private val observers = mutableListOf<ObserverFunction<T>>()
 
-    fun addObserver(observer: Observer<T>) {
+    fun addObserver(observer: ObserverFunction<T>) {
         observers.add(observer)
     }
 
-    fun removeObserver(observer: Observer<T>) {
+    fun removeObserver(observer: ObserverFunction<T>) {
         observers.remove(observer)
     }
 
-    fun notifyObservers(message: T) {
-        observers.forEach{ it.update(message) }
-    }
+    fun notifyObservers(message: T) = observers.forEach{ it(message) }
 }

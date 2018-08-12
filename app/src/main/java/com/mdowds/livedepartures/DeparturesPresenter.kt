@@ -3,7 +3,6 @@ package com.mdowds.livedepartures
 import com.mdowds.livedepartures.networking.*
 import com.mdowds.livedepartures.utils.AppConfig
 import com.mdowds.livedepartures.utils.Config
-import com.mdowds.livedepartures.utils.Observer
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import java.util.*
 
@@ -11,7 +10,7 @@ class DeparturesPresenter(private val view: DeparturesView,
                           private val config: Config,
                           private val api: TransportInfoApi,
                           private val arrivalRequestsTimer: Timer,
-                          private val stopPointsDataSource: NearbyStopPointsDataSource): Observer<TflStopPoints> {
+                          private val stopPointsDataSource: NearbyStopPointsDataSource) {
 
     companion object {
         fun create(view: DeparturesFragment, stopPointsDataSource: NearbyStopPointsDataSource): DeparturesPresenter {
@@ -28,7 +27,7 @@ class DeparturesPresenter(private val view: DeparturesView,
     }
 
     init {
-        stopPointsDataSource.addObserver(this)
+        stopPointsDataSource.addObserver(this::updateStopPoints)
         val stopPoints = stopPointsDataSource.currentStopPoints
         if(stopPoints != null) updateStopPoints(stopPoints)
     }
@@ -41,9 +40,7 @@ class DeparturesPresenter(private val view: DeparturesView,
         stopArrivalsUpdates()
     }
 
-    fun onStop() = stopPointsDataSource.removeObserver(this)
-
-    override fun update(message: TflStopPoints) = updateStopPoints(message)
+    fun onStop() = stopPointsDataSource.removeObserver(this::updateStopPoints)
 
     fun onArrivalsResponse(newResults: List<TflArrivalPrediction>, section: Section, updateArrivalsTask: TimerTask) {
         val newResultsOrdered = newResults.sortedBy { it.timeToStation }
@@ -53,7 +50,7 @@ class DeparturesPresenter(private val view: DeparturesView,
         if (newDepartures.isEmpty()) updateArrivalsTask.cancel()
     }
 
-    private fun updateStopPoints(tflStopPoints: TflStopPoints) {
+    fun updateStopPoints(tflStopPoints: TflStopPoints) {
 
         stopArrivalsUpdates()
         view.removeStopSections()

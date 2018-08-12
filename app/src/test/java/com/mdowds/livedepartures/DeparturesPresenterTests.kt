@@ -56,30 +56,30 @@ class DeparturesPresenterTests {
     //region update
 
     @Test
-    fun `update creates a section on the view for each stop point`() {
+    fun `updateStopPoints creates a section on the view for each stop point`() {
         val stopPoints = makeTflStopPoints()
-        presenter.update(stopPoints)
+        presenter.updateStopPoints(stopPoints)
         verify(mockView, times(stopPoints.places.count())).addStopSection(any())
     }
 
     @Test
-    fun `update creates a maximum of 5 sections on the view`() {
+    fun `updateStopPoints creates a maximum of 5 sections on the view`() {
         val stopPoints = makeTflStopPoints(10)
-        presenter.update(stopPoints)
+        presenter.updateStopPoints(stopPoints)
         verify(mockView, times(5)).addStopSection(any())
     }
 
     @Test
-    fun `update triggers a TimerTask for each stop point every 10 seconds`() {
+    fun `updateStopPoints triggers a TimerTask for each stop point every 10 seconds`() {
         val stopPoints = makeTflStopPoints()
-        presenter.update(stopPoints)
+        presenter.updateStopPoints(stopPoints)
         verify(mockTimer, times(stopPoints.places.count())).scheduleAtFixedRate(any(), eq(0L), eq(10000L))
     }
 
     @Test
-    fun `update passes a TimerTask that makes an arrivals request`() {
+    fun `updateStopPoints passes a TimerTask that makes an arrivals request`() {
         val stopPoints = makeTflStopPoints()
-        presenter.update(stopPoints)
+        presenter.updateStopPoints(stopPoints)
 
         argumentCaptor<TimerTask>().apply {
             verify(mockTimer).scheduleAtFixedRate(capture(), any<Long>(), any())
@@ -90,21 +90,21 @@ class DeparturesPresenterTests {
     }
 
     @Test
-    fun `update triggers a maximum of 5 TimerTasks`() {
+    fun `StopPoints triggers a maximum of 5 TimerTasks`() {
         val stopPoints = makeTflStopPoints(10)
-        presenter.update(stopPoints)
+        presenter.updateStopPoints(stopPoints)
         verify(mockTimer, times(5)).scheduleAtFixedRate(any(), any<Long>(), any())
     }
 
     @Test
-    fun `update clears the current sections in the view`() {
-        presenter.update(makeTflStopPoints())
+    fun `updateStopPoints clears the current sections in the view`() {
+        presenter.updateStopPoints(makeTflStopPoints())
         verify(mockView).removeStopSections()
     }
 
     @Test
-    fun `update cancels all existing TimerTasks for arrivals requests`() {
-        presenter.update(makeTflStopPoints())
+    fun `updateStopPoints cancels all existing TimerTasks for arrivals requests`() {
+        presenter.updateStopPoints(makeTflStopPoints())
         verify(mockTimer).purge()
     }
 
