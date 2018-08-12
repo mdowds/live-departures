@@ -24,7 +24,7 @@ class TflApiTests {
 
     @Test
     fun `getArrivals makes a call to the correct endpoint`() {
-        tflApi.getArrivals(TflStopPoint("Waterloo", "WLOO", "", listOf())) {}
+        tflApi.getArrivals(TflStopPoint("Waterloo", "WLOO", "", listOf(), listOf())) {}
         verify(requestQueue).add(argThat<Request<String>> { url == "https://api.tfl.gov.uk/StopPoint/WLOO/Arrivals"})
     }
 

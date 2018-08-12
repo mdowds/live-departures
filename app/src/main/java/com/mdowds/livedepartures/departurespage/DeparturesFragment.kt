@@ -6,10 +6,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.mdowds.livedepartures.Departure
-import com.mdowds.livedepartures.MainActivity
-import com.mdowds.livedepartures.R
-import com.mdowds.livedepartures.StopPoint
+import com.mdowds.livedepartures.*
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.LOADED
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.LOADING
@@ -25,6 +22,8 @@ interface DeparturesView {
 }
 
 class DeparturesFragment : Fragment(), DeparturesView {
+
+    var mode: Mode = Mode.All
 
     private lateinit var presenter: DeparturesPresenter
     private lateinit var adapter: SectionedRecyclerViewAdapter

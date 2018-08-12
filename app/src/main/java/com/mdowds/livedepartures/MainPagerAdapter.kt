@@ -7,13 +7,16 @@ import com.mdowds.livedepartures.departurespage.DeparturesFragment
 
 class MainPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
-    private val modes = listOf("Bus", "Tube", "Overground", "DLR")
+    private val modes = Mode.values().drop(1)
 
-    override fun getItem(position: Int): Fragment {
-        return DeparturesFragment()
-    }
+    override fun getItem(position: Int): Fragment =
+            DeparturesFragment().apply { mode = modes[position] }
 
     override fun getCount(): Int = modes.count()
 
-    override fun getPageTitle(position: Int): CharSequence? = modes[position]
+    override fun getPageTitle(position: Int): CharSequence? = modes[position].name
+}
+
+enum class Mode(val tflName: String) {
+    All("all"), Bus("bus"), Tube("tube"), Overground("overground")
 }

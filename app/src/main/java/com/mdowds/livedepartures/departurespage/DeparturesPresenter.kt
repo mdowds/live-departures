@@ -1,6 +1,7 @@
 package com.mdowds.livedepartures.departurespage
 
 import com.mdowds.livedepartures.Departure
+import com.mdowds.livedepartures.Mode
 import com.mdowds.livedepartures.NearbyStopPointsDataSource
 import com.mdowds.livedepartures.StopPoint
 import com.mdowds.livedepartures.networking.*
@@ -10,6 +11,7 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import java.util.*
 
 class DeparturesPresenter(private val view: DeparturesView,
+                          private val mode: Mode,
                           private val config: Config,
                           private val api: TransportInfoApi,
                           private val arrivalRequestsTimer: Timer,
@@ -21,6 +23,7 @@ class DeparturesPresenter(private val view: DeparturesView,
             val config = AppConfig(view.resources).config
 
             return DeparturesPresenter(view,
+                    view.mode,
                     config,
                     TflApi(RequestQueueSingleton.getInstance(view.activity!!.applicationContext).requestQueue),
                     Timer("Departure requests"),
@@ -47,7 +50,10 @@ class DeparturesPresenter(private val view: DeparturesView,
 
     fun onArrivalsResponse(newResults: List<TflArrivalPrediction>, section: Section, updateArrivalsTask: TimerTask) {
         val newResultsOrdered = newResults.sortedBy { it.timeToStation }
-        val newDepartures = newResultsOrdered.take(config.departuresPerStop).map { Departure(it) }
+        val newDepartures = newResultsOrdered
+                .filter { it.modeName == mode.tflName }
+                .take(config.departuresPerStop)
+                .map { Departure(it) }
         view.updateResults(newDepartures, section)
 
         if (newDepartures.isEmpty()) updateArrivalsTask.cancel()
@@ -58,9 +64,9 @@ class DeparturesPresenter(private val view: DeparturesView,
         stopArrivalsUpdates()
         view.removeStopSections()
 
-        // TODO pass in the relevant mode on creation and filter out here
         tflStopPoints.places
                 .filter { it.lines.isNotEmpty() }
+                .filter { it.modes.contains(mode.tflName) }
                 .take(config.stopsToShow)
                 .forEach { tflStopPoint ->
                     val newSection = view.addStopSection(StopPoint(tflStopPoint))

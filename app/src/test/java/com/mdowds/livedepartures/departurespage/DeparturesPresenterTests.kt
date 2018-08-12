@@ -1,12 +1,14 @@
 package com.mdowds.livedepartures.departurespage
 
+import com.mdowds.livedepartures.Mode
 import com.mdowds.livedepartures.NearbyStopPointsDataSource
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeConfig
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeTflArrivalPrediction
+import com.mdowds.livedepartures.helpers.TestDataFactory.makeTflStopPoint
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeTflStopPoints
 import com.mdowds.livedepartures.networking.TflArrivalPrediction
+import com.mdowds.livedepartures.networking.TflStopPoints
 import com.mdowds.livedepartures.networking.TransportInfoApi
-import com.mdowds.livedepartures.utils.LocationManager
 import com.nhaarman.mockitokotlin2.*
 import org.junit.Before
 import org.junit.Test
@@ -15,7 +17,6 @@ import java.util.*
 class DeparturesPresenterTests {
 
     private val mockView = mock<DeparturesView>()
-    private val mockLocationManager = mock<LocationManager>()
     private val mockApi = mock<TransportInfoApi>()
     private val mockTimer = mock<Timer>()
     private val mockDataSource = NearbyStopPointsDataSource(makeConfig(), mock(), mock())
@@ -24,7 +25,7 @@ class DeparturesPresenterTests {
 
     @Before
     fun setUp(){
-        presenter = DeparturesPresenter(mockView, makeConfig(), mockApi, mockTimer, mockDataSource)
+        presenter = DeparturesPresenter(mockView, Mode.Bus, makeConfig(), mockApi, mockTimer, mockDataSource)
     }
 
     //region onResume
@@ -54,7 +55,7 @@ class DeparturesPresenterTests {
 
     //endregion
 
-    //region update
+    //region updateStopPoints
 
     @Test
     fun `updateStopPoints creates a section on the view for each stop point`() {
@@ -91,7 +92,7 @@ class DeparturesPresenterTests {
     }
 
     @Test
-    fun `StopPoints triggers a maximum of 5 TimerTasks`() {
+    fun `updateStopPoints triggers a maximum of 5 TimerTasks`() {
         val stopPoints = makeTflStopPoints(10)
         presenter.updateStopPoints(stopPoints)
         verify(mockTimer, times(5)).scheduleAtFixedRate(any(), any<Long>(), any())
@@ -107,6 +108,17 @@ class DeparturesPresenterTests {
     fun `updateStopPoints cancels all existing TimerTasks for arrivals requests`() {
         presenter.updateStopPoints(makeTflStopPoints())
         verify(mockTimer).purge()
+    }
+
+    @Test
+    fun `updateStopPoints filters out points without the specified mode`() {
+        val stopPoints = TflStopPoints(listOf(
+                makeTflStopPoint(listOf(Mode.Bus, Mode.Tube)),
+                makeTflStopPoint(listOf(Mode.Tube))
+        ))
+        presenter.updateStopPoints(stopPoints)
+
+        verify(mockView, times(1)).addStopSection(any())
     }
 
     //endregion
@@ -141,6 +153,16 @@ class DeparturesPresenterTests {
         val mockTask = mock<TimerTask>()
         presenter.onArrivalsResponse(arrivals, mock(), mockTask)
         verify(mockTask).cancel()
+    }
+
+    @Test
+    fun `onArrivalsResponse filters out arrivals without the specified mode`() {
+        val arrivals = listOf(
+                makeTflArrivalPrediction(mode = Mode.Bus),
+                makeTflArrivalPrediction(mode = Mode.Tube)
+        )
+        presenter.onArrivalsResponse(arrivals, mock(), mock())
+        verify(mockView).updateResults(argThat { count() == 1 }, any())
     }
 
     //endregion
