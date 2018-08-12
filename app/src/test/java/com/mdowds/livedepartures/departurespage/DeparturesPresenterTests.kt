@@ -12,8 +12,11 @@ import com.mdowds.livedepartures.networking.TransportInfoApi
 import com.nhaarman.mockitokotlin2.*
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import java.util.*
 
+@RunWith(RobolectricTestRunner::class)
 class DeparturesPresenterTests {
 
     private val mockView = mock<DeparturesView>()

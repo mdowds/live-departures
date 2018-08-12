@@ -5,7 +5,10 @@ import com.mdowds.livedepartures.Mode
 import com.mdowds.livedepartures.networking.TflArrivalPrediction
 import org.junit.Test
 import org.junit.Assert.*
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class DepartureTests {
 
     private val arrivalPrediction = TflArrivalPrediction("Piccadilly Line", "Cockfosters", 120, Mode.Tube.tflName)
