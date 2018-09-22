@@ -1,6 +1,7 @@
 package com.mdowds.livedepartures
 
 import android.location.Location
+import com.mdowds.livedepartures.mainpage.MainActivity
 import com.mdowds.livedepartures.networking.*
 import com.mdowds.livedepartures.utils.*
 import com.mdowds.livedepartures.utils.Observable

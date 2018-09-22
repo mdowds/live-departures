@@ -1,19 +1,31 @@
-package com.mdowds.livedepartures
+package com.mdowds.livedepartures.mainpage
 
 import android.content.pm.PackageManager.PERMISSION_GRANTED
-import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.support.v4.view.ViewPager
 import android.util.Log
+import android.view.View
+import com.mdowds.livedepartures.Mode
+import com.mdowds.livedepartures.NearbyStopPointsDataSource
+import com.mdowds.livedepartures.R
 import com.mdowds.livedepartures.utils.DevicePermissionsManager.Companion.PERMISSIONS_REQUEST_CODE
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : FragmentActivity() {
+interface MainView {
+    fun showLoadingSpinner()
+    fun hideLoadingSpinner()
+    fun setHeaderTextColor(color: Int)
+    fun setHeaderBackgroundColor(color: Int)
+    fun updateModes(modes: List<Mode>)
+}
+
+class MainActivity : FragmentActivity(), MainView {
 
     lateinit var dataSource: NearbyStopPointsDataSource
         private set
 
+    private lateinit var presenter: MainPresenter
     private lateinit var pagerAdapter: MainPagerAdapter
     private lateinit var viewPager: ViewPager
 
@@ -21,17 +33,45 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         dataSource = NearbyStopPointsDataSource.create(this)
+        presenter = MainPresenter(this, dataSource)
         setUpViewPager()
+        showLoadingSpinner()
     }
 
     override fun onResume() {
         super.onResume()
-        dataSource.startUpdates()
+        presenter.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        dataSource.stopUpdates()
+        presenter.onPause()
+    }
+
+    override fun showLoadingSpinner() {
+        fullScreenProgressBar.visibility = View.VISIBLE
+        viewPager.visibility = View.GONE
+    }
+
+    override fun hideLoadingSpinner() {
+        fullScreenProgressBar.visibility = View.GONE
+        viewPager.visibility = View.VISIBLE
+    }
+
+    override fun setHeaderTextColor(color: Int) {
+        pager_header.setTextColor(color)
+        pager_header.tabIndicatorColor = color
+    }
+
+    override fun setHeaderBackgroundColor(color: Int) {
+        pager_header.setBackgroundColor(color)
+    }
+
+    override fun updateModes(modes: List<Mode>) {
+        pagerAdapter.startUpdate(viewPager)
+        pagerAdapter.notifyDataSetChanged()
+        pagerAdapter.finishUpdate(viewPager)
+        pager_header.setBackgroundColor(modes.first().color)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -58,28 +98,8 @@ class MainActivity : FragmentActivity() {
 
     private fun setUpViewPager() {
         viewPager = findViewById(R.id.container)
-        pagerAdapter = MainPagerAdapter(supportFragmentManager, dataSource, viewPager)
+        pagerAdapter = MainPagerAdapter(supportFragmentManager, presenter)
         viewPager.adapter = pagerAdapter
-
-        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageSelected(position: Int) {
-                val mode = pagerAdapter.modes[position]
-
-                if (mode.color == Color.WHITE) {
-                    pager_header.setTextColor(Color.BLACK)
-                    pager_header.tabIndicatorColor = Color.BLACK
-                } else {
-                    pager_header.setTextColor(Color.WHITE)
-                    pager_header.tabIndicatorColor = Color.WHITE
-                }
-
-                pager_header.setBackgroundColor(mode.color)
-            }
-
-            override fun onPageScrollStateChanged(state: Int) {}
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
-        })
-
-        pager_header.setBackgroundColor(Mode.values()[0].color)
+        viewPager.addOnPageChangeListener(presenter)
     }
 }

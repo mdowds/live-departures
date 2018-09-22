@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mdowds.livedepartures.*
+import com.mdowds.livedepartures.mainpage.MainActivity
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.LOADED
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.LOADING
@@ -68,12 +69,12 @@ class DeparturesFragment : Fragment(), DeparturesView {
     }
 
     override fun showLoadingSpinner() {
-        fullScreenProgressBar.visibility = View.VISIBLE
+        pageProgressBar.visibility = View.VISIBLE
         departuresRecyclerView.visibility = View.GONE
     }
 
     override fun hideLoadingSpinner() {
-        fullScreenProgressBar.visibility = View.GONE
+        pageProgressBar.visibility = View.GONE
         departuresRecyclerView.visibility = View.VISIBLE
     }
 
