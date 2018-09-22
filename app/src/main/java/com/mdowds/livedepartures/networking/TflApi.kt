@@ -21,7 +21,7 @@ interface TransportInfoApi {
 class TflApi(private val requestQueue: RequestQueue): TransportInfoApi {
 
     override fun getNearbyStops(lat: Double, lon: Double, callback: NearbyStopsCallback) {
-        val endpoint = "/Place?type=NaptanMetroStation,NaptanRailStation,NaptanPublicBusCoachTram&lat=$lat&lon=$lon&radius=200"
+        val endpoint = "/Place?type=NaptanMetroStation,NaptanRailStation,NaptanPublicBusCoachTram,NaptanFerryPort&lat=$lat&lon=$lon&radius=200"
 
         makeGetRequest(endpoint) { response ->
             val stopPoints = Gson().fromJson<TflStopPoints>(response, TflStopPoints::class.java)
