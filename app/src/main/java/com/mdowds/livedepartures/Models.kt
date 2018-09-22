@@ -43,5 +43,5 @@ private fun convertStationName(name: String): String {
 
 private fun formatArrivalTime(arrivalInSeconds: Int): String {
     val arrivalInMinutes = (arrivalInSeconds / 60)
-    return if(arrivalInMinutes == 0) "Due" else "$arrivalInMinutes mins"
+    return if (arrivalInMinutes == 0) "Due" else "$arrivalInMinutes mins"
 }

@@ -30,5 +30,5 @@ object TestDataFactory {
 
     fun makeArrivalModel() : Departure = Departure("Line", "Destination", "Departure Time")
 
-    fun makeConfig() : Config = Config(5,5,10,10,false,"")
+    fun makeConfig() : Config = Config(5,5,10,10)
 }

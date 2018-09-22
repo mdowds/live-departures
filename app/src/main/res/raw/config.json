@@ -2,7 +2,5 @@
   "stopsToShow": 5,
   "departuresPerStop": 5,
   "departuresRefreshInSecs": 10,
-  "distanceToFetchNewStopsInMetres": 10,
-  "useFakeLocation": false,
-  "fakeLocation": "51.583899, -0.020362"
+  "distanceToFetchNewStopsInMetres": 10
 }

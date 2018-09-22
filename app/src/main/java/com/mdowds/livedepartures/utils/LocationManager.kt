@@ -55,23 +55,3 @@ class FusedLocationManager(private val fusedLocationClient: FusedLocationProvide
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 }
-
-// TODO remove this and use real location
-class FakeLocationManager(private val locationString: String): LocationManager {
-
-    private val locationToReturn = Location("").apply {
-        val asStrings = locationString
-                .replace("\\s".toRegex(), "")
-                .split(",")
-
-        latitude = asStrings[0].toDouble()
-        longitude = asStrings[1].toDouble()
-    }
-
-    override fun startLocationUpdates(callback: LastLocationCallback) {
-        callback(locationToReturn)
-    }
-
-    override fun stopLocationUpdates() {}
-}
-
