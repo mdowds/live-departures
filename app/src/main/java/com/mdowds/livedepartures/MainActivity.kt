@@ -1,6 +1,7 @@
 package com.mdowds.livedepartures
 
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.support.v4.view.ViewPager
@@ -56,13 +57,23 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun setUpViewPager() {
-        pagerAdapter = MainPagerAdapter(supportFragmentManager)
         viewPager = findViewById(R.id.container)
+        pagerAdapter = MainPagerAdapter(supportFragmentManager, dataSource, viewPager)
         viewPager.adapter = pagerAdapter
 
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageSelected(position: Int) {
-                pager_header.setBackgroundColor(Mode.values()[position].color)
+                val mode = pagerAdapter.modes[position]
+
+                if (mode.color == Color.WHITE) {
+                    pager_header.setTextColor(Color.BLACK)
+                    pager_header.tabIndicatorColor = Color.BLACK
+                } else {
+                    pager_header.setTextColor(Color.WHITE)
+                    pager_header.tabIndicatorColor = Color.WHITE
+                }
+
+                pager_header.setBackgroundColor(mode.color)
             }
 
             override fun onPageScrollStateChanged(state: Int) {}

@@ -58,33 +58,33 @@ class DeparturesPresenterTests {
 
     //endregion
 
-    //region updateStopPoints
+    //region onStopPointsUpdated
 
     @Test
     fun `updateStopPoints creates a section on the view for each stop point`() {
         val stopPoints = makeTflStopPoints()
-        presenter.updateStopPoints(stopPoints)
+        presenter.onStopPointsUpdated(stopPoints)
         verify(mockView, times(stopPoints.places.count())).addStopSection(any())
     }
 
     @Test
     fun `updateStopPoints creates a maximum of 5 sections on the view`() {
         val stopPoints = makeTflStopPoints(10)
-        presenter.updateStopPoints(stopPoints)
+        presenter.onStopPointsUpdated(stopPoints)
         verify(mockView, times(5)).addStopSection(any())
     }
 
     @Test
     fun `updateStopPoints triggers a TimerTask for each stop point every 10 seconds`() {
         val stopPoints = makeTflStopPoints()
-        presenter.updateStopPoints(stopPoints)
+        presenter.onStopPointsUpdated(stopPoints)
         verify(mockTimer, times(stopPoints.places.count())).scheduleAtFixedRate(any(), eq(0L), eq(10000L))
     }
 
     @Test
     fun `updateStopPoints passes a TimerTask that makes an arrivals request`() {
         val stopPoints = makeTflStopPoints()
-        presenter.updateStopPoints(stopPoints)
+        presenter.onStopPointsUpdated(stopPoints)
 
         argumentCaptor<TimerTask>().apply {
             verify(mockTimer).scheduleAtFixedRate(capture(), any<Long>(), any())
@@ -97,19 +97,19 @@ class DeparturesPresenterTests {
     @Test
     fun `updateStopPoints triggers a maximum of 5 TimerTasks`() {
         val stopPoints = makeTflStopPoints(10)
-        presenter.updateStopPoints(stopPoints)
+        presenter.onStopPointsUpdated(stopPoints)
         verify(mockTimer, times(5)).scheduleAtFixedRate(any(), any<Long>(), any())
     }
 
     @Test
     fun `updateStopPoints clears the current sections in the view`() {
-        presenter.updateStopPoints(makeTflStopPoints())
+        presenter.onStopPointsUpdated(makeTflStopPoints())
         verify(mockView).removeStopSections()
     }
 
     @Test
     fun `updateStopPoints cancels all existing TimerTasks for arrivals requests`() {
-        presenter.updateStopPoints(makeTflStopPoints())
+        presenter.onStopPointsUpdated(makeTflStopPoints())
         verify(mockTimer).purge()
     }
 
@@ -119,7 +119,7 @@ class DeparturesPresenterTests {
                 makeTflStopPoint(listOf(Mode.Bus, Mode.Tube)),
                 makeTflStopPoint(listOf(Mode.Tube))
         ))
-        presenter.updateStopPoints(stopPoints)
+        presenter.onStopPointsUpdated(stopPoints)
 
         verify(mockView, times(1)).addStopSection(any())
     }
@@ -131,7 +131,7 @@ class DeparturesPresenterTests {
                 makeTflStopPoint(listOf(Mode.Bus, Mode.Tube)),
                 makeTflStopPoint(listOf(Mode.Tube))
         ))
-        presenter.updateStopPoints(stopPoints)
+        presenter.onStopPointsUpdated(stopPoints)
 
         verify(mockView, times(2)).addStopSection(any())
     }

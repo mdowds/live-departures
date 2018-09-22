@@ -20,10 +20,16 @@ data class StopPoint(val name: String, val indicator: String?) {
     )
 }
 
-enum class Mode(val tflName: String, val color: Int) {
-    Bus("bus", Color.rgb(220, 36, 31)),
-    Tube("tube", Color.rgb(0, 25, 168)),
-    Overground("overground", Color.rgb(239, 123, 16));
+enum class Mode(val tflName: String, val displayName: String, val color: Int, val canGetArrivals: Boolean = true) {
+    Bus("bus", "Bus", Color.rgb(220, 36, 31)),
+    Tube("tube", "Tube", Color.rgb(0, 25, 168)),
+    Overground("overground", "Overground", Color.rgb(239, 123, 16)),
+    NationalRail("national-rail", "National Rail", Color.rgb(255, 255, 255), false),
+    DLR("dlr", "DLR", Color.rgb(0, 175, 173));
+
+    companion object {
+        fun fromModeName(name: String) = values().find { it.tflName == name }
+    }
 }
 
 private fun convertStationName(name: String): String {

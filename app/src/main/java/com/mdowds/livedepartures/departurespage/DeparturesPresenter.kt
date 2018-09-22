@@ -33,9 +33,9 @@ class DeparturesPresenter(private val view: DeparturesView,
     }
 
     init {
-        stopPointsDataSource.addObserver(this::updateStopPoints)
+        stopPointsDataSource.addObserver(this::onStopPointsUpdated)
         val stopPoints = stopPointsDataSource.currentStopPoints
-        if(stopPoints != null) updateStopPoints(stopPoints)
+        if(stopPoints != null) onStopPointsUpdated(stopPoints)
     }
 
     fun onResume() {
@@ -46,28 +46,32 @@ class DeparturesPresenter(private val view: DeparturesView,
         stopArrivalsUpdates()
     }
 
-    fun onStop() = stopPointsDataSource.removeObserver(this::updateStopPoints)
+    fun onStop() = stopPointsDataSource.removeObserver(this::onStopPointsUpdated)
 
     fun onArrivalsResponse(newResults: List<TflArrivalPrediction>, section: Section, updateArrivalsTask: TimerTask) {
         val newResultsOrdered = newResults.sortedBy { it.timeToStation }
         val newDepartures = newResultsOrdered
+                .asSequence()
                 .filter { mode == null || it.modeName == mode.tflName }
                 .take(config.departuresPerStop)
                 .map { Departure(it) }
+                .toList()
         view.updateResults(newDepartures, section)
 
         if (newDepartures.isEmpty()) updateArrivalsTask.cancel()
     }
 
-    fun updateStopPoints(tflStopPoints: TflStopPoints) {
+    fun onStopPointsUpdated(tflStopPoints: TflStopPoints) {
 
         stopArrivalsUpdates()
         view.removeStopSections()
 
         tflStopPoints.places
+                .asSequence()
                 .filter { it.lines.isNotEmpty() }
                 .filter { mode == null || it.modes.contains(mode.tflName) }
                 .take(config.stopsToShow)
+                .toList()
                 .forEach { tflStopPoint ->
                     val newSection = view.addStopSection(StopPoint(tflStopPoint))
                     startArrivalsUpdates(tflStopPoint, newSection)
