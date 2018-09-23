@@ -11,52 +11,69 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class DepartureTests {
 
-    private val arrivalPrediction = TflArrivalPrediction("Piccadilly Line", "Cockfosters", 120, Mode.Tube.tflName)
+    private val arrivalPrediction = TflArrivalPrediction("Piccadilly Line", "Cockfosters", 120, Mode.Tube.tflName, "Northbound - Platform 1")
 
     @Test
-    fun `Creates an ArrivalInfoModel from a TflArrivalPrediction`() {
-        val arrivalInfoModel = Departure(arrivalPrediction)
+    fun `Creates a departure from a TflArrivalPrediction`() {
+        val departure = Departure(arrivalPrediction)
 
-        assertEquals(arrivalPrediction.lineName, arrivalInfoModel.line)
-        assertEquals(arrivalPrediction.destinationName, arrivalInfoModel.destination)
+        assertEquals(arrivalPrediction.lineName, departure.line)
+        assertEquals(arrivalPrediction.destinationName, departure.destination)
     }
 
     @Test
     fun `Strips "Rail Station" from destination name`() {
-        val arrivalPrediction = TflArrivalPrediction("London Overground", "Barking Rail Station", 120, Mode.Overground.tflName)
-        val arrivalInfoModel = Departure(arrivalPrediction)
+        val arrivalPrediction = TflArrivalPrediction("London Overground", "Barking Rail Station", 120, Mode.Overground.tflName, "Platform 3")
+        val departure = Departure(arrivalPrediction)
 
-        assertEquals("Barking", arrivalInfoModel.destination)
+        assertEquals("Barking", departure.destination)
     }
 
     @Test
     fun `Strips "Underground Station" from destination name`() {
-        val arrivalPrediction = TflArrivalPrediction("Piccadilly Line", "Cockfosters Underground Station", 130, Mode.Tube.tflName)
-        val arrivalInfoModel = Departure(arrivalPrediction)
-
-        assertEquals("Cockfosters", arrivalInfoModel.destination)
+        val departure = Departure(this.arrivalPrediction.copy(destinationName = "Cockfosters Underground Station"))
+        assertEquals("Cockfosters", departure.destination)
     }
 
     @Test
     fun `Converts arrival time to minutes`() {
-        val arrivalInfoModel = Departure(arrivalPrediction)
-
-        assertEquals("2 mins", arrivalInfoModel.departureTime)
+        val departure = Departure(arrivalPrediction)
+        assertEquals("2 mins", departure.departureTime)
     }
 
     @Test
     fun `Converts arrival time to minutes and rounds`() {
-        val arrivalPrediction = TflArrivalPrediction("Piccadilly Line", "Cockfosters", 130, Mode.Tube.tflName)
-        val arrivalInfoModel = Departure(arrivalPrediction)
-
-        assertEquals("2 mins", arrivalInfoModel.departureTime)
+        val departure = Departure(this.arrivalPrediction.copy(timeToStation = 130))
+        assertEquals("2 mins", departure.departureTime)
     }
 
     @Test
     fun `Sets arrival time as "Due" when arrival in less than 1 minute`() {
-        val arrivalPrediction = TflArrivalPrediction("Piccadilly Line", "Cockfosters", 50, Mode.Tube.tflName)
-        val arrivalInfoModel = Departure(arrivalPrediction)
+        val departure = Departure(this.arrivalPrediction.copy(timeToStation = 50))
+        assertEquals("Due", departure.departureTime)
+    }
 
-        assertEquals("Due", arrivalInfoModel.departureTime)
+    @Test
+    fun `Sets direction as empty string when none present`() {
+        val departure = Departure(arrivalPrediction.copy(platformName = "Platform 1"))
+        assertEquals("", departure.direction)
+    }
+
+    @Test
+    fun `Extracts direction from platformName when present`() {
+        val departure = Departure(arrivalPrediction)
+        assertEquals("Northbound", departure.direction)
+    }
+
+    @Test
+    fun `Sets platform name`() {
+        val departure = Departure(arrivalPrediction.copy(platformName = "Platform 1"))
+        assertEquals("Platform 1", departure.platform)
+    }
+
+    @Test
+    fun `Extracts platform from platformName when direction present`() {
+        val departure = Departure(arrivalPrediction)
+        assertEquals("Platform 1", departure.platform)
     }
 }

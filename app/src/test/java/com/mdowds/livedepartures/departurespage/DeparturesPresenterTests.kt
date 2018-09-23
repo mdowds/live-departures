@@ -48,11 +48,11 @@ class DeparturesPresenterTests {
 
     // endregion
 
-    //region onPause
+    //region onStop
 
     @Test
-    fun `onPause stops arrivals requests`() {
-        presenter.onPause()
+    fun `onStop stops arrivals requests`() {
+        presenter.onStop()
         verify(mockTimer).purge()
     }
 

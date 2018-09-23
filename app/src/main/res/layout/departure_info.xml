@@ -30,7 +30,7 @@
         android:layout_toStartOf="@id/arrival_time">
 
         <TextView
-            android:id="@+id/route_name"
+            android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
@@ -39,10 +39,10 @@
             tools:text="Title" />
 
         <TextView
-            android:id="@+id/route_destination"
+            android:id="@+id/subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/route_name"
+            android:layout_below="@+id/title"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="2dp"

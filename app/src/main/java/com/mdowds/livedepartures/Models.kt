@@ -4,12 +4,15 @@ import android.graphics.Color
 import com.mdowds.livedepartures.networking.TflArrivalPrediction
 import com.mdowds.livedepartures.networking.TflStopPoint
 
-data class Departure(val line: String, val destination: String, val departureTime: String) {
+data class Departure(val line: String, val destination: String, val departureTime: String, val mode: Mode?, val direction: String, val platform: String) {
 
     constructor(tflArrivalPrediction: TflArrivalPrediction) : this(
             tflArrivalPrediction.lineName,
             convertStationName(tflArrivalPrediction.destinationName),
-            formatArrivalTime(tflArrivalPrediction.timeToStation)
+            formatArrivalTime(tflArrivalPrediction.timeToStation),
+            Mode.fromModeName(tflArrivalPrediction.modeName),
+            extractDirection(tflArrivalPrediction.platformName),
+            extractPlatform(tflArrivalPrediction.platformName)
     )
 }
 
@@ -44,4 +47,15 @@ private fun convertStationName(name: String): String {
 private fun formatArrivalTime(arrivalInSeconds: Int): String {
     val arrivalInMinutes = (arrivalInSeconds / 60)
     return if (arrivalInMinutes == 0) "Due" else "$arrivalInMinutes mins"
+}
+
+private fun extractDirection(platformName: String): String {
+    return if(platformName.contains(" -")) {
+        platformName.substring(0, platformName.indexOf(" -"))
+    } else ""
+}
+private fun extractPlatform(platformName: String): String {
+    return if(platformName.contains(" -")) {
+        platformName.substring(platformName.indexOf(" -") + 3)
+    } else platformName
 }
