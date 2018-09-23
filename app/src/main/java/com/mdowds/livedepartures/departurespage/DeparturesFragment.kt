@@ -42,11 +42,6 @@ class DeparturesFragment : Fragment(), DeparturesView {
         presenter.onResume()
     }
 
-    override fun onPause() {
-        super.onPause()
-        presenter.onPause()
-    }
-
     override fun onStop() {
         super.onStop()
         presenter.onStop()

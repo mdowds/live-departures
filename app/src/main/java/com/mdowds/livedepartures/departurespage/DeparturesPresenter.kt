@@ -42,11 +42,10 @@ class DeparturesPresenter(private val view: DeparturesView,
         if (stopPointsDataSource.currentStopPoints == null) view.showLoadingSpinner()
     }
 
-    fun onPause() {
+    fun onStop() {
         stopArrivalsUpdates()
+        stopPointsDataSource.removeObserver(this::onStopPointsUpdated)
     }
-
-    fun onStop() = stopPointsDataSource.removeObserver(this::onStopPointsUpdated)
 
     fun onArrivalsResponse(newResults: List<TflArrivalPrediction>, section: Section, updateArrivalsTask: TimerTask) {
         val newResultsOrdered = newResults.sortedBy { it.timeToStation }
@@ -89,7 +88,9 @@ class DeparturesPresenter(private val view: DeparturesView,
         arrivalRequestsTimer.scheduleAtFixedRate(repeatedTask, 0L, period)
     }
 
-    private fun stopArrivalsUpdates() = arrivalRequestsTimer.purge()
+    private fun stopArrivalsUpdates() {
+        arrivalRequestsTimer.purge()
+    }
 
     private fun requestArrivals(stopPoint: TflStopPoint, section: Section, updateArrivalsTask: TimerTask) {
         api.getArrivals(stopPoint) {
