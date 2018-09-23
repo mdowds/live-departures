@@ -36,6 +36,20 @@ class DepartureTests {
     }
 
     @Test
+    fun `Strips "DLR Station" from destination name`() {
+        val departure = Departure(this.arrivalPrediction.copy(destinationName = "Stratford DLR Station"))
+        assertEquals("Stratford", departure.destination)
+    }
+
+    @Test
+    fun `Strips "(London)" from destination name`() {
+        val departure = Departure(this.arrivalPrediction.copy(destinationName = "Stratford (London)"))
+        assertEquals("Stratford", departure.destination)
+    }
+
+
+
+    @Test
     fun `Converts arrival time to minutes`() {
         val departure = Departure(arrivalPrediction)
         assertEquals("2 mins", departure.departureTime)
@@ -75,5 +89,11 @@ class DepartureTests {
     fun `Extracts platform from platformName when direction present`() {
         val departure = Departure(arrivalPrediction)
         assertEquals("Platform 1", departure.platform)
+    }
+
+    @Test
+    fun `Adds "Platform" to platform name if not present`() {
+        val departure = Departure(arrivalPrediction.copy(platformName = "4a"))
+        assertEquals("Platform 4a", departure.platform)
     }
 }

@@ -39,9 +39,10 @@ enum class Mode(val tflName: String, val displayName: String, val color: Int, va
 }
 
 private fun convertStationName(name: String): String {
-    return listOf(" Rail Station", " Underground Station").fold(name) { currentName, textToReplace ->
-        currentName.replace(textToReplace, "")
-    }
+    return listOf(" Rail Station", " Underground Station", " DLR Station", " (London)")
+            .fold(name) { currentName, textToReplace ->
+                currentName.replace(textToReplace, "")
+            }
 }
 
 private fun formatArrivalTime(arrivalInSeconds: Int): String {
@@ -50,12 +51,15 @@ private fun formatArrivalTime(arrivalInSeconds: Int): String {
 }
 
 private fun extractDirection(platformName: String): String {
-    return if(platformName.contains(" -")) {
-        platformName.substring(0, platformName.indexOf(" -"))
-    } else ""
+    return when {
+        platformName.contains(" -") -> platformName.substring(0, platformName.indexOf(" -"))
+        else -> ""
+    }
 }
 private fun extractPlatform(platformName: String): String {
-    return if(platformName.contains(" -")) {
-        platformName.substring(platformName.indexOf(" -") + 3)
-    } else platformName
+    return when {
+        platformName.contains(" -") -> platformName.substring(platformName.indexOf(" -") + 3)
+        !platformName.contains("Platform") -> "Platform $platformName"
+        else -> platformName
+    }
 }
