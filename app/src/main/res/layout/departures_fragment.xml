@@ -18,7 +18,7 @@
         android:layout_height="match_parent"
         android:paddingBottom="50dp"
         android:paddingTop="0dp"
-        android:scrollbars="vertical"
+        android:scrollbars="none"
         tools:context="com.mdowds.livedepartures.departurespage.DeparturesFragment"
         tools:deviceIds="wear" />
 
