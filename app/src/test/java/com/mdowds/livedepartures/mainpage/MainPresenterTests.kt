@@ -57,5 +57,14 @@ class MainPresenterTests {
         verify(mockView).updateModes(listOf(Mode.Bus))
     }
 
+    @Test
+    fun `stopPointsUpdated orders modes by order they are defined in the enum`() {
+        val stopPoints = listOf(
+                TestDataFactory.makeTflStopPoint(modes = listOf(Mode.Tube, Mode.RiverBoat, Mode.Bus))
+        )
+        presenter.stopPointsUpdated(TflStopPoints(stopPoints))
+        verify(mockView).updateModes(listOf(Mode.Bus, Mode.Tube, Mode.RiverBoat))
+    }
+
     //endregion stopPointsUpdated
 }

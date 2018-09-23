@@ -29,9 +29,9 @@ enum class Mode(val tflName: String, val displayName: String, val color: Int, va
     DLR("dlr", "DLR", Color.rgb(0, 175, 173)),
     Overground("overground", "Overground", Color.rgb(239, 123, 16)),
     Tram("tram", "Tram", Color.rgb(0, 189, 25)),
-    NationalRail("national-rail", "National Rail", Color.rgb(255, 255, 255), false),
     TflRail("tflrail", "TfL Rail", Color.rgb(0, 25, 128)),
-    RiverBoat("river-boat", "River Boat", Color.rgb(0, 160, 226));
+    RiverBoat("river-boat", "River Boat", Color.rgb(0, 160, 226)),
+    NationalRail("national-rail", "National Rail", Color.rgb(255, 255, 255), false);
 
     companion object {
         fun fromModeName(name: String) = values().find { it.tflName == name }

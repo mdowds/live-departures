@@ -48,6 +48,7 @@ class MainPresenter(private val view: MainView,
                 .distinct()
                 .map { Mode.fromModeName(it) }
                 .filterNotNull()
+                .sorted()
                 .toList()
 
         view.updateModes(modes)
