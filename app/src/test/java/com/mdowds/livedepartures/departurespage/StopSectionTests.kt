@@ -137,6 +137,18 @@ class StopSectionTests {
         verify(mockViewContainer.arrivalTime).text = "3 mins"
     }
 
+    @Test
+    fun `onBindItemViewHolder sets the title to 'arriving' when the service is terminating`() {
+        val model = makeDepartureModel(isTerminating = true)
+        val section = StopSection("", "", listOf(model))
+        val mockViewContainer = MockArrivalInfoViewContainer()
+        val holder = StopSection.DepartureInfoViewHolder(mockViewContainer.view)
+
+        section.onBindItemViewHolder(holder, 0)
+
+        verify(mockViewContainer.subtitle).text = "Arriving"
+    }
+
     //endregion
     
     class MockArrivalInfoViewContainer {

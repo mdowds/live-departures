@@ -4,7 +4,7 @@ import android.graphics.Color
 import com.mdowds.livedepartures.networking.TflArrivalPrediction
 import com.mdowds.livedepartures.networking.TflStopPoint
 
-data class Departure(val line: String, val destination: String, val departureTime: String, val mode: Mode?, val direction: String, val platform: String) {
+data class Departure(val line: String, val destination: String, val departureTime: String, val mode: Mode?, val direction: String, val platform: String, val isTerminating: Boolean) {
 
     constructor(tflArrivalPrediction: TflArrivalPrediction) : this(
             tflArrivalPrediction.lineName,
@@ -12,7 +12,8 @@ data class Departure(val line: String, val destination: String, val departureTim
             formatArrivalTime(tflArrivalPrediction.timeToStation),
             Mode.fromModeName(tflArrivalPrediction.modeName),
             extractDirection(tflArrivalPrediction.platformName),
-            extractPlatform(tflArrivalPrediction.platformName)
+            extractPlatform(tflArrivalPrediction.platformName),
+            tflArrivalPrediction.naptanId == tflArrivalPrediction.destinationNaptanId
     )
 }
 

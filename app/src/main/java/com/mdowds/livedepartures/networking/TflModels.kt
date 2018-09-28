@@ -1,6 +1,13 @@
 package com.mdowds.livedepartures.networking
 
-data class TflArrivalPrediction(val lineName: String, val destinationName: String, val timeToStation: Int, val modeName: String, val platformName: String)
+data class TflArrivalPrediction(val lineName: String,
+                                val stationName: String,
+                                val naptanId: String,
+                                val destinationName: String,
+                                val destinationNaptanId: String,
+                                val timeToStation: Int,
+                                val modeName: String,
+                                val platformName: String)
 
 data class TflStopPoints(val places: List<TflStopPoint>)
 

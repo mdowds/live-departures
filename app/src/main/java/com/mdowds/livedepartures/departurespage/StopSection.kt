@@ -71,7 +71,8 @@ class StopSection(private val stopName: String,
             }
 
             view.title.text = title
-            view.subtitle.text = departure.destination
+            view.subtitle.text = if(departure.isTerminating) "Arriving"
+                else departure.destination
             view.arrival_time.text = departure.departureTime
         }
     }

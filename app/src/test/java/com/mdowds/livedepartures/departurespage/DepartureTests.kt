@@ -11,7 +11,7 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class DepartureTests {
 
-    private val arrivalPrediction = TflArrivalPrediction("Piccadilly Line", "Cockfosters", 120, Mode.Tube.tflName, "Northbound - Platform 1")
+    private val arrivalPrediction = TflArrivalPrediction("Piccadilly Line", "Finsbury Park", "FBY", "Cockfosters", "CKF", 120, Mode.Tube.tflName, "Northbound - Platform 1")
 
     @Test
     fun `Creates a departure from a TflArrivalPrediction`() {
@@ -23,27 +23,26 @@ class DepartureTests {
 
     @Test
     fun `Strips "Rail Station" from destination name`() {
-        val arrivalPrediction = TflArrivalPrediction("London Overground", "Barking Rail Station", 120, Mode.Overground.tflName, "Platform 3")
-        val departure = Departure(arrivalPrediction)
+        val departure = Departure(arrivalPrediction.copy(destinationName = "Barking Rail Station"))
 
         assertEquals("Barking", departure.destination)
     }
 
     @Test
     fun `Strips "Underground Station" from destination name`() {
-        val departure = Departure(this.arrivalPrediction.copy(destinationName = "Cockfosters Underground Station"))
+        val departure = Departure(arrivalPrediction.copy(destinationName = "Cockfosters Underground Station"))
         assertEquals("Cockfosters", departure.destination)
     }
 
     @Test
     fun `Strips "DLR Station" from destination name`() {
-        val departure = Departure(this.arrivalPrediction.copy(destinationName = "Stratford DLR Station"))
+        val departure = Departure(arrivalPrediction.copy(destinationName = "Stratford DLR Station"))
         assertEquals("Stratford", departure.destination)
     }
 
     @Test
     fun `Strips "(London)" from destination name`() {
-        val departure = Departure(this.arrivalPrediction.copy(destinationName = "Stratford (London)"))
+        val departure = Departure(arrivalPrediction.copy(destinationName = "Stratford (London)"))
         assertEquals("Stratford", departure.destination)
     }
 
@@ -57,13 +56,13 @@ class DepartureTests {
 
     @Test
     fun `Converts arrival time to minutes and rounds`() {
-        val departure = Departure(this.arrivalPrediction.copy(timeToStation = 130))
+        val departure = Departure(arrivalPrediction.copy(timeToStation = 130))
         assertEquals("2 mins", departure.departureTime)
     }
 
     @Test
     fun `Sets arrival time as "Due" when arrival in less than 1 minute`() {
-        val departure = Departure(this.arrivalPrediction.copy(timeToStation = 50))
+        val departure = Departure(arrivalPrediction.copy(timeToStation = 50))
         assertEquals("Due", departure.departureTime)
     }
 
@@ -95,5 +94,11 @@ class DepartureTests {
     fun `Adds "Platform" to platform name if not present`() {
         val departure = Departure(arrivalPrediction.copy(platformName = "4a"))
         assertEquals("Platform 4a", departure.platform)
+    }
+
+    @Test
+    fun `Sets isTerminating to true if the destination is the same as the station`() {
+        val departure = Departure(arrivalPrediction.copy(naptanId = arrivalPrediction.destinationNaptanId))
+        assertTrue(departure.isTerminating)
     }
 }
