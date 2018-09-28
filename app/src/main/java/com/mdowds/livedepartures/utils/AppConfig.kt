@@ -17,4 +17,5 @@ class AppConfig(private val resources: Resources) {
 data class Config(val stopsToShow: Int,
                   val departuresPerStop: Int,
                   val departuresRefreshInSecs: Int,
-                  val distanceToFetchNewStopsInMetres: Int)
+                  val distanceToFetchNewStopsInMetres: Int,
+                  val radiusToFetchStopsInMetres: Int)

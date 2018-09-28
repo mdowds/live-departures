@@ -7,6 +7,7 @@ import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.mdowds.livedepartures.BuildConfig
 
 private const val BASE_URL = "https://api.tfl.gov.uk"
 
@@ -14,14 +15,19 @@ typealias ArrivalsCallback = (List<TflArrivalPrediction>) -> Unit
 typealias NearbyStopsCallback = (TflStopPoints) -> Unit
 
 interface TransportInfoApi {
-    fun getNearbyStops(lat: Double, lon: Double, callback: NearbyStopsCallback)
+    fun getNearbyStops(lat: Double, lon: Double, radius: Int, callback: NearbyStopsCallback)
     fun getArrivals(stopPoint: TflStopPoint, callback: ArrivalsCallback)
 }
 
 class TflApi(private val requestQueue: RequestQueue): TransportInfoApi {
 
-    override fun getNearbyStops(lat: Double, lon: Double, callback: NearbyStopsCallback) {
-        val endpoint = "/Place?type=NaptanMetroStation,NaptanRailStation,NaptanPublicBusCoachTram,NaptanFerryPort&lat=$lat&lon=$lon&radius=200"
+    private val appId = BuildConfig.TFL_APP_ID
+    private val appKey = BuildConfig.TFL_APP_KEY
+
+    private val tflStopTypes = "NaptanMetroStation,NaptanRailStation,NaptanPublicBusCoachTram,NaptanFerryPort"
+
+    override fun getNearbyStops(lat: Double, lon: Double, radius: Int, callback: NearbyStopsCallback) {
+        val endpoint = "/Place?type=$tflStopTypes&lat=$lat&lon=$lon&radius=$radius"
 
         makeGetRequest(endpoint) { response ->
             val stopPoints = Gson().fromJson<TflStopPoints>(response, TflStopPoints::class.java)
@@ -39,7 +45,8 @@ class TflApi(private val requestQueue: RequestQueue): TransportInfoApi {
     }
 
     private fun makeGetRequest(endpoint: String, responseCallback: (String) -> Unit) {
-        val url = BASE_URL + endpoint
+        val separator = if(endpoint.contains("?")) "&" else "?"
+        val url = BASE_URL + endpoint + separator + "app_id=$appId&app_key=$appKey"
         Log.i("GET", url)
         val request = StringRequest(Request.Method.GET,
                 url,

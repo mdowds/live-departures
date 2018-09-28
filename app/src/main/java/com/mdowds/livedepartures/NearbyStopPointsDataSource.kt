@@ -33,7 +33,7 @@ class NearbyStopPointsDataSource(private val config: Config,
         if (!locationHasSignificantlyChanged(currentLocation, location)) return
 
         currentLocation = location
-        api.getNearbyStops(location.latitude, location.longitude, this::onStopPointsResponse)
+        api.getNearbyStops(location.latitude, location.longitude, config.radiusToFetchStopsInMetres, this::onStopPointsResponse)
     }
 
     fun onStopPointsResponse(stopPoints: TflStopPoints) {

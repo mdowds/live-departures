@@ -18,6 +18,12 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField('String', "TFL_APP_ID", LiveDepartures_tflAppId)
+            buildConfigField('String', "TFL_APP_KEY", LiveDepartures_tflAppKey)
+        }
+        debug {
+            buildConfigField('String', "TFL_APP_ID", LiveDepartures_tflAppId)
+            buildConfigField('String', "TFL_APP_KEY", LiveDepartures_tflAppKey)
         }
     }
     sourceSets {
