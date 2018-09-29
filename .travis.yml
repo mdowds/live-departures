@@ -19,7 +19,4 @@ android:
     - android-27
     - extra-android-m2repository
 
-script:
-  - export TFL_APP_ID="id_blah"
-  - export TFL_APP_KEY="key_blah"
-  - ./gradlew test
+script: ./gradlew test
