@@ -20,8 +20,6 @@ interface DeparturesView {
     fun addStopSection(stopPoint: StopPoint): StopSection
     fun removeStopSections()
     fun updateResults(newDepartures: List<Departure>, stopPoint: StopPoint)
-//    fun showLoadingSpinner()
-//    fun hideLoadingSpinner()
 }
 
 class DeparturesFragment : Fragment(), DeparturesView {
@@ -61,16 +59,6 @@ class DeparturesFragment : Fragment(), DeparturesView {
         section.state = LOADED
         adapter.notifyDataSetChanged()
     }
-
-//    override fun showLoadingSpinner() {
-//        pageProgressBar.visibility = View.VISIBLE
-//        departuresRecyclerView.visibility = View.GONE
-//    }
-//
-//    override fun hideLoadingSpinner() {
-//        pageProgressBar.visibility = View.GONE
-//        departuresRecyclerView.visibility = View.VISIBLE
-//    }
 
     private fun setUpRecyclerView() {
         adapter = SectionedRecyclerViewAdapter()

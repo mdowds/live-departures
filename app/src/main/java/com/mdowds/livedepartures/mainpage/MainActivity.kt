@@ -18,7 +18,6 @@ interface MainView {
     fun hideLoadingSpinner()
     fun setHeaderTextColor(color: Int)
     fun setHeaderBackgroundColor(color: Int)
-//    fun updateModes(modes: List<Mode>)
     fun refreshStopPoints()
 }
 
@@ -31,7 +30,6 @@ class MainActivity : FragmentActivity(), MainView {
         private set
 
     private lateinit var presenter: MainPresenter
-//    private lateinit var pagerAdapter: MainPagerAdapter
     private lateinit var viewPager: ViewPager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,13 +75,6 @@ class MainActivity : FragmentActivity(), MainView {
         createPagerAdapter(viewPager)
         pager_header.setBackgroundColor(presenter.modes.first().color)
     }
-
-//    override fun updateModes(modes: List<Mode>) {
-//        pagerAdapter.startUpdate(viewPager)
-//        pagerAdapter.notifyDataSetChanged()
-//        pagerAdapter.finishUpdate(viewPager)
-//        pager_header.setBackgroundColor(modes.first().color)
-//    }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == PERMISSIONS_REQUEST_CODE) {
