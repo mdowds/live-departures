@@ -62,10 +62,10 @@ class MainPresenterTests {
     @Test
     fun `stopPointsUpdated orders modes by order they are defined in the enum`() {
         val stopPoints = listOf(
-                TestDataFactory.makeTflStopPoint(modes = listOf(Mode.Tube, Mode.RiverBoat, Mode.Bus))
+                TestDataFactory.makeTflStopPoint(modes = listOf(Mode.Tube, Mode.RiverBus, Mode.Bus))
         )
         presenter.stopPointsUpdated(TflStopPoints(stopPoints))
-        assertEquals(listOf(Mode.Bus, Mode.Tube, Mode.RiverBoat), presenter.modes)
+        assertEquals(listOf(Mode.Bus, Mode.Tube, Mode.RiverBus), presenter.modes)
     }
 
     //endregion stopPointsUpdated

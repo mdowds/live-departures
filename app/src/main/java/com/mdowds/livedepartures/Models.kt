@@ -32,7 +32,7 @@ enum class Mode(val tflName: String, val displayName: String, val color: Int, va
     Overground("overground", "Overground", Color.rgb(239, 123, 16)),
     Tram("tram", "Tram", Color.rgb(0, 189, 25)),
     TflRail("tflrail", "TfL Rail", Color.rgb(0, 25, 128)),
-    RiverBoat("river-boat", "River Boat", Color.rgb(0, 160, 226)),
+    RiverBus("river-bus", "River Bus", Color.rgb(0, 160, 226)),
     NationalRail("national-rail", "National Rail", Color.rgb(255, 255, 255), false);
 
     companion object {
