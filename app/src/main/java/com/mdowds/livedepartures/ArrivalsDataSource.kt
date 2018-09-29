@@ -50,8 +50,8 @@ class ArrivalsDataSource(private val api: TransportInfoApi,
     }
 
     private fun requestArrivals(stopPoint: TflStopPoint) {
-        api.getArrivals(stopPoint) { arrivals ->
+        api.getArrivals(stopPoint, { arrivals ->
             onArrivalsResponse(stopPoint, arrivals)
-        }
+        })
     }
 }

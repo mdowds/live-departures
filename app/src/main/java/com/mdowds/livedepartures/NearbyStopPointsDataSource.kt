@@ -9,7 +9,7 @@ import com.mdowds.livedepartures.utils.Observable
 
 class NearbyStopPointsDataSource(private val config: Config,
                                  private val locationManager: LocationManager,
-                                 private val api: TransportInfoApi) : Observable<TflStopPoints>() {
+                                 private val api: TransportInfoApi) : Observable<TflStopPoints?>() {
 
     companion object {
         fun create(view: MainActivity): NearbyStopPointsDataSource {
@@ -34,7 +34,16 @@ class NearbyStopPointsDataSource(private val config: Config,
         if (!locationHasSignificantlyChanged(currentLocation, location)) return
 
         currentLocation = location
-        api.getNearbyStops(location.latitude, location.longitude, config.radiusToFetchStopsInMetres, this::onStopPointsResponse)
+        requestNearbyStops()
+    }
+
+    fun requestNearbyStops() {
+        val location = currentLocation ?: return
+
+        api.getNearbyStops(location.latitude,
+                location.longitude,
+                config.radiusToFetchStopsInMetres,
+                this::onStopPointsResponse) { notifyObservers(null) }
     }
 
     private fun onStopPointsResponse(stopPoints: TflStopPoints) {

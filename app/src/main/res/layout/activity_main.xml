@@ -3,6 +3,35 @@
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <LinearLayout
+        android:id="@+id/retryMessage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:onClick="onClickRetry"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingBottom="16dp"
+            android:text="@string/no_connection"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableStart="@drawable/ic_refresh_white_24dp"
+            android:drawablePadding="8dp"
+            android:text="@string/tap_retry"
+            android:textAlignment="center"
+            android:textSize="16sp" />
+    </LinearLayout>
+
     <ProgressBar
         android:id="@+id/fullScreenProgressBar"
         style="?android:attr/progressBarStyle"
@@ -15,6 +44,7 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:textAlignment="center"
         tools:context=".mainpage.MainActivity">
 
         <android.support.v4.view.PagerTabStrip
@@ -23,7 +53,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top|center"
             android:paddingBottom="4dp"
-            android:paddingTop="4dp" />
+            android:paddingTop="4dp">
+
+        </android.support.v4.view.PagerTabStrip>
 
     </android.support.v4.view.ViewPager>
 </FrameLayout>

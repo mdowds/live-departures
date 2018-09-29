@@ -35,6 +35,11 @@ class MainPresenter(private val view: MainView,
         arrivalsDataSource.stopUpdates()
     }
 
+    fun onClickRetry() {
+        view.showLoadingSpinner()
+        stopPointsDataSource.requestNearbyStops()
+    }
+
     override fun onPageSelected(position: Int) {
         val mode = modes[position]
 
@@ -50,7 +55,10 @@ class MainPresenter(private val view: MainView,
     override fun onPageScrollStateChanged(state: Int) {}
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
-    fun stopPointsUpdated(newStopPoints: TflStopPoints) {
+    fun stopPointsUpdated(newStopPoints: TflStopPoints?) {
+
+        if(newStopPoints == null) return view.showRetryMessage()
+
         view.showLoadingSpinner()
 
         stopPoints = newStopPoints.places

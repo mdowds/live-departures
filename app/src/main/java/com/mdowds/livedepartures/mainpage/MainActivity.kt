@@ -19,6 +19,7 @@ interface MainView {
     fun setHeaderTextColor(color: Int)
     fun setHeaderBackgroundColor(color: Int)
     fun refreshStopPoints()
+    fun showRetryMessage()
 }
 
 class MainActivity : FragmentActivity(), MainView {
@@ -31,6 +32,8 @@ class MainActivity : FragmentActivity(), MainView {
 
     private lateinit var presenter: MainPresenter
     private lateinit var viewPager: ViewPager
+
+    //region lifecycle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,14 +55,20 @@ class MainActivity : FragmentActivity(), MainView {
         presenter.onPause()
     }
 
+    //endregion
+
+    //region MainView implementation
+
     override fun showLoadingSpinner() {
         fullScreenProgressBar.visibility = View.VISIBLE
         viewPager.visibility = View.GONE
+        retryMessage.visibility = View.GONE
     }
 
     override fun hideLoadingSpinner() {
         fullScreenProgressBar.visibility = View.GONE
         viewPager.visibility = View.VISIBLE
+        retryMessage.visibility = View.GONE
     }
 
     override fun setHeaderTextColor(color: Int) {
@@ -75,6 +84,20 @@ class MainActivity : FragmentActivity(), MainView {
         createPagerAdapter(viewPager)
         pager_header.setBackgroundColor(presenter.modes.first().color)
     }
+
+    override fun showRetryMessage() {
+        retryMessage.visibility = View.VISIBLE
+        fullScreenProgressBar.visibility = View.GONE
+        viewPager.visibility = View.GONE
+    }
+
+    //endregion
+
+    //region event handlers
+
+    fun onClickRetry(view: View) = presenter.onClickRetry()
+
+    //endregion
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == PERMISSIONS_REQUEST_CODE) {
