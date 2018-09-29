@@ -4,9 +4,8 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
-print("Has appid property: " + hasProperty('LiveDepartures_tflAppId'))
-def tflAppId = hasProperty('LiveDepartures_tflAppId') ? LiveDepartures_tflAppId : 'NO_APP_ID'
-def tflAppKey = hasProperty('LiveDepartures_tflAppKey') ? LiveDepartures_tflAppKey : 'NO_APP_KEY'
+def tflAppId = hasProperty('LiveDepartures_tflAppId') ? LiveDepartures_tflAppId : '"NO_APP_ID"'
+def tflAppKey = hasProperty('LiveDepartures_tflAppKey') ? LiveDepartures_tflAppKey : '"NO_APP_KEY"'
 
 android {
     compileSdkVersion 27
