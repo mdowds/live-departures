@@ -4,6 +4,9 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+def tflAppId = hasProperty('LiveDepartures_tflAppId') ? LiveDepartures_tflAppId : System.getenv('TFL_APP_ID')
+def tflAppKey = hasProperty('LiveDepartures_tflAppKey') ? LiveDepartures_tflAppKey : System.getenv('TFL_APP_KEY')
+
 android {
     compileSdkVersion 27
     buildToolsVersion "28.0.1"
@@ -18,12 +21,12 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField('String', "TFL_APP_ID", LiveDepartures_tflAppId)
-            buildConfigField('String', "TFL_APP_KEY", LiveDepartures_tflAppKey)
+            buildConfigField('String', "TFL_APP_ID", tflAppId)
+            buildConfigField('String', "TFL_APP_KEY", tflAppKey)
         }
         debug {
-            buildConfigField('String', "TFL_APP_ID", LiveDepartures_tflAppId)
-            buildConfigField('String', "TFL_APP_KEY", LiveDepartures_tflAppKey)
+            buildConfigField('String', "TFL_APP_ID", tflAppId)
+            buildConfigField('String', "TFL_APP_KEY", tflAppKey)
         }
     }
     sourceSets {
