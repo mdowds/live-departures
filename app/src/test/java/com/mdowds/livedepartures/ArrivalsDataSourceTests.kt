@@ -31,7 +31,7 @@ class ArrivalsDataSourceTests {
         dataSource.addStopPoint(stopPoint)
         dataSource.requestArrivalsForAll()
 
-        verify(mockApi, times(2)).getArrivals(eq(stopPoint), any())
+        verify(mockApi, times(2)).getArrivals(eq(stopPoint), any(), anyOrNull())
     }
 
     @Test
@@ -39,7 +39,7 @@ class ArrivalsDataSourceTests {
         val stopPoint = makeTflStopPoint()
         dataSource.addStopPoint(stopPoint)
 
-        verify(mockApi).getArrivals(eq(stopPoint), any())
+        verify(mockApi).getArrivals(eq(stopPoint), any(), anyOrNull())
     }
 
     @Test
@@ -48,7 +48,7 @@ class ArrivalsDataSourceTests {
         dataSource.addStopPoint(makeTflStopPoint())
         dataSource.requestArrivalsForAll()
 
-        verify(mockApi, times(3)).getArrivals(any(), any())
+        verify(mockApi, times(3)).getArrivals(any(), any(), anyOrNull())
     }
 
     @Test
@@ -57,7 +57,7 @@ class ArrivalsDataSourceTests {
         dataSource.addStopPoint(makeTflStopPoint(name = "Different name"))
         dataSource.requestArrivalsForAll()
 
-        verify(mockApi, times(3)).getArrivals(any(), any())
+        verify(mockApi, times(3)).getArrivals(any(), any(), anyOrNull())
     }
 
     //endregion
@@ -70,7 +70,7 @@ class ArrivalsDataSourceTests {
         dataSource.onArrivalsResponse(makeTflStopPoint(), listOf())
         dataSource.requestArrivalsForAll()
 
-        verify(mockApi, times(1)).getArrivals(any(), any())
+        verify(mockApi, times(1)).getArrivals(any(), any(), anyOrNull())
 
     }
 
