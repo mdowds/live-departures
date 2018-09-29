@@ -3,4 +3,6 @@
     <string name="no_departure_info">Sorry, departure info is currently unavailable for this mode</string>
     <string name="no_connection">No connection</string>
     <string name="tap_retry">Tap to retry</string>
+    <string name="no_stops">Sorry, no nearby stops were found</string>
+    <string name="no_current_departures">No current departures</string>
 </resources>

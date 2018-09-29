@@ -2,14 +2,11 @@ package com.mdowds.livedepartures.mainpage
 
 import android.graphics.Color
 import android.support.v4.view.ViewPager
-import android.util.Log
-import android.view.View
 import com.mdowds.livedepartures.ArrivalsDataSource
 import com.mdowds.livedepartures.Mode
 import com.mdowds.livedepartures.NearbyStopPointsDataSource
 import com.mdowds.livedepartures.networking.TflStopPoint
 import com.mdowds.livedepartures.networking.TflStopPoints
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainPresenter(private val view: MainView,
                     private val stopPointsDataSource: NearbyStopPointsDataSource,
@@ -58,6 +55,7 @@ class MainPresenter(private val view: MainView,
     fun stopPointsUpdated(newStopPoints: TflStopPoints?) {
 
         if(newStopPoints == null) return view.showRetryMessage()
+        if(newStopPoints.places.isEmpty()) return view.showNoStopsMessage()
 
         view.showLoadingSpinner()
 
@@ -74,6 +72,6 @@ class MainPresenter(private val view: MainView,
                 .toList()
 
         view.refreshStopPoints()
-        view.hideLoadingSpinner()
+        view.showDeparturesPages()
     }
 }

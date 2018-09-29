@@ -14,12 +14,13 @@ import com.mdowds.livedepartures.utils.DevicePermissionsManager.Companion.PERMIS
 import kotlinx.android.synthetic.main.activity_main.*
 
 interface MainView {
-    fun showLoadingSpinner()
-    fun hideLoadingSpinner()
     fun setHeaderTextColor(color: Int)
     fun setHeaderBackgroundColor(color: Int)
     fun refreshStopPoints()
+    fun showLoadingSpinner()
+    fun showDeparturesPages()
     fun showRetryMessage()
+    fun showNoStopsMessage()
 }
 
 class MainActivity : FragmentActivity(), MainView {
@@ -59,18 +60,6 @@ class MainActivity : FragmentActivity(), MainView {
 
     //region MainView implementation
 
-    override fun showLoadingSpinner() {
-        fullScreenProgressBar.visibility = View.VISIBLE
-        viewPager.visibility = View.GONE
-        retryMessage.visibility = View.GONE
-    }
-
-    override fun hideLoadingSpinner() {
-        fullScreenProgressBar.visibility = View.GONE
-        viewPager.visibility = View.VISIBLE
-        retryMessage.visibility = View.GONE
-    }
-
     override fun setHeaderTextColor(color: Int) {
         pager_header.setTextColor(color)
         pager_header.tabIndicatorColor = color
@@ -85,11 +74,13 @@ class MainActivity : FragmentActivity(), MainView {
         pager_header.setBackgroundColor(presenter.modes.first().color)
     }
 
-    override fun showRetryMessage() {
-        retryMessage.visibility = View.VISIBLE
-        fullScreenProgressBar.visibility = View.GONE
-        viewPager.visibility = View.GONE
-    }
+    override fun showLoadingSpinner() = hideAllExcept(fullScreenProgressBar)
+
+    override fun showDeparturesPages() = hideAllExcept(viewPager)
+
+    override fun showRetryMessage() = hideAllExcept(retryMessage)
+
+    override fun showNoStopsMessage() = hideAllExcept(noStopsMessage)
 
     //endregion
 
@@ -130,5 +121,12 @@ class MainActivity : FragmentActivity(), MainView {
     private fun createPagerAdapter(viewPager: ViewPager) {
         val pagerAdapter = MainPagerAdapter(supportFragmentManager, presenter)
         viewPager.adapter = pagerAdapter
+    }
+
+    private fun hideAllExcept(view: View) {
+        val views = listOf(viewPager, retryMessage, fullScreenProgressBar, noStopsMessage)
+        views.forEach {
+            it.visibility = if(it == view) View.VISIBLE else View.GONE
+        }
     }
 }
