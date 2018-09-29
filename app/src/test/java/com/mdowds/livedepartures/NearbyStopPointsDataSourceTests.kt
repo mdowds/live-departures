@@ -25,7 +25,7 @@ class NearbyStopPointsDataSourceTests {
     @Test
     fun `onLocationResponse requests nearby stops for first location response`() {
         dataSource.onLocationResponse(TestDataFactory.makeLocation(1.0, -1.0))
-        verify(mockApi).getNearbyStops(eq(1.0), eq(-1.0), any())
+        verify(mockApi).getNearbyStops(eq(1.0), eq(-1.0), any(), any())
     }
 
     @Test
@@ -35,7 +35,7 @@ class NearbyStopPointsDataSourceTests {
 
         dataSource.onLocationResponse(originalLocation)
         dataSource.onLocationResponse(TestDataFactory.makeLocation(1.0, -1.0))
-        verify(mockApi, times(1)).getNearbyStops(any(), any(), any())
+        verify(mockApi, times(1)).getNearbyStops(any(), any(), any(), any())
     }
 
     @Test
@@ -45,7 +45,7 @@ class NearbyStopPointsDataSourceTests {
 
         dataSource.onLocationResponse(originalLocation)
         dataSource.onLocationResponse(TestDataFactory.makeLocation(1.1, -1.0))
-        verify(mockApi, times(2)).getNearbyStops(any(), any(), any())
+        verify(mockApi, times(2)).getNearbyStops(any(), any(), any(), any())
     }
 
     //endregion

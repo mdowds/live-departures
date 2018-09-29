@@ -17,9 +17,10 @@ data class Departure(val line: String, val destination: String, val departureTim
     )
 }
 
-data class StopPoint(val name: String, val indicator: String?) {
+data class StopPoint(val name: String, val stopId: String, val indicator: String?) {
     constructor(tflStopPoint: TflStopPoint) : this(
             convertStationName(tflStopPoint.commonName),
+            tflStopPoint.naptanId,
             tflStopPoint.indicator
     )
 }

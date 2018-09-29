@@ -2,26 +2,37 @@ package com.mdowds.livedepartures.mainpage
 
 import android.graphics.Color
 import android.support.v4.view.ViewPager
+import android.util.Log
+import android.view.View
+import com.mdowds.livedepartures.ArrivalsDataSource
 import com.mdowds.livedepartures.Mode
 import com.mdowds.livedepartures.NearbyStopPointsDataSource
+import com.mdowds.livedepartures.networking.TflStopPoint
 import com.mdowds.livedepartures.networking.TflStopPoints
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainPresenter(private val view: MainView,
-                    private val dataSource: NearbyStopPointsDataSource): ViewPager.OnPageChangeListener {
+                    private val stopPointsDataSource: NearbyStopPointsDataSource,
+                    private val arrivalsDataSource: ArrivalsDataSource): ViewPager.OnPageChangeListener {
 
     var modes = listOf<Mode>()
         private set
 
+    var stopPoints = listOf<TflStopPoint>()
+        private set
+
     init {
-        dataSource.addObserver(this::stopPointsUpdated)
+        stopPointsDataSource.addObserver(this::stopPointsUpdated)
     }
 
     fun onResume() {
-        dataSource.startUpdates()
+        stopPointsDataSource.startUpdates()
+        arrivalsDataSource.startUpdates()
     }
 
     fun onPause() {
-        dataSource.stopUpdates()
+        stopPointsDataSource.stopUpdates()
+        arrivalsDataSource.stopUpdates()
     }
 
     override fun onPageSelected(position: Int) {
@@ -39,10 +50,13 @@ class MainPresenter(private val view: MainView,
     override fun onPageScrollStateChanged(state: Int) {}
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
-    fun stopPointsUpdated(stopPoints: TflStopPoints) {
-        view.hideLoadingSpinner()
+    fun stopPointsUpdated(newStopPoints: TflStopPoints) {
+        view.showLoadingSpinner()
 
-        modes = stopPoints.places
+        stopPoints = newStopPoints.places
+        arrivalsDataSource.removeStopPoints()
+
+        modes = newStopPoints.places
                 .flatMap { it.modes }
                 .asSequence()
                 .distinct()
@@ -51,6 +65,7 @@ class MainPresenter(private val view: MainView,
                 .sorted()
                 .toList()
 
-        view.updateModes(modes)
+        view.refreshStopPoints()
+        view.hideLoadingSpinner()
     }
 }

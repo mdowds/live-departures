@@ -1,6 +1,7 @@
 package com.mdowds.livedepartures
 
 import android.location.Location
+import android.util.Log
 import com.mdowds.livedepartures.mainpage.MainActivity
 import com.mdowds.livedepartures.networking.*
 import com.mdowds.livedepartures.utils.*
@@ -36,7 +37,7 @@ class NearbyStopPointsDataSource(private val config: Config,
         api.getNearbyStops(location.latitude, location.longitude, config.radiusToFetchStopsInMetres, this::onStopPointsResponse)
     }
 
-    fun onStopPointsResponse(stopPoints: TflStopPoints) {
+    private fun onStopPointsResponse(stopPoints: TflStopPoints) {
         currentStopPoints = stopPoints
         notifyObservers(stopPoints)
     }

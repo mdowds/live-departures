@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentActivity
 import android.support.v4.view.ViewPager
 import android.util.Log
 import android.view.View
+import com.mdowds.livedepartures.ArrivalsDataSource
 import com.mdowds.livedepartures.Mode
 import com.mdowds.livedepartures.NearbyStopPointsDataSource
 import com.mdowds.livedepartures.R
@@ -17,23 +18,28 @@ interface MainView {
     fun hideLoadingSpinner()
     fun setHeaderTextColor(color: Int)
     fun setHeaderBackgroundColor(color: Int)
-    fun updateModes(modes: List<Mode>)
+//    fun updateModes(modes: List<Mode>)
+    fun refreshStopPoints()
 }
 
 class MainActivity : FragmentActivity(), MainView {
 
-    lateinit var dataSource: NearbyStopPointsDataSource
+    lateinit var stopPointsDataSource: NearbyStopPointsDataSource
+        private set
+
+    lateinit var arrivalsDataSource: ArrivalsDataSource
         private set
 
     private lateinit var presenter: MainPresenter
-    private lateinit var pagerAdapter: MainPagerAdapter
+//    private lateinit var pagerAdapter: MainPagerAdapter
     private lateinit var viewPager: ViewPager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        dataSource = NearbyStopPointsDataSource.create(this)
-        presenter = MainPresenter(this, dataSource)
+        stopPointsDataSource = NearbyStopPointsDataSource.create(this)
+        arrivalsDataSource = ArrivalsDataSource.create(this)
+        presenter = MainPresenter(this, stopPointsDataSource, arrivalsDataSource)
         setUpViewPager()
         showLoadingSpinner()
     }
@@ -67,18 +73,23 @@ class MainActivity : FragmentActivity(), MainView {
         pager_header.setBackgroundColor(color)
     }
 
-    override fun updateModes(modes: List<Mode>) {
-        pagerAdapter.startUpdate(viewPager)
-        pagerAdapter.notifyDataSetChanged()
-        pagerAdapter.finishUpdate(viewPager)
-        pager_header.setBackgroundColor(modes.first().color)
+    override fun refreshStopPoints() {
+        createPagerAdapter(viewPager)
+        pager_header.setBackgroundColor(presenter.modes.first().color)
     }
+
+//    override fun updateModes(modes: List<Mode>) {
+//        pagerAdapter.startUpdate(viewPager)
+//        pagerAdapter.notifyDataSetChanged()
+//        pagerAdapter.finishUpdate(viewPager)
+//        pager_header.setBackgroundColor(modes.first().color)
+//    }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == PERMISSIONS_REQUEST_CODE) {
             when {
                 grantResults.isEmpty() -> Log.i("Permissions result", "User interaction was cancelled.")
-                (grantResults[0] == PERMISSION_GRANTED) -> dataSource.startUpdates()
+                (grantResults[0] == PERMISSION_GRANTED) -> stopPointsDataSource.startUpdates()
                 else -> {
                     // TODO show message with link to settings if permission rejected
 //                    showSnackbar(R.string.permission_denied_explanation, R.string.settings,
@@ -98,8 +109,12 @@ class MainActivity : FragmentActivity(), MainView {
 
     private fun setUpViewPager() {
         viewPager = findViewById(R.id.container)
-        pagerAdapter = MainPagerAdapter(supportFragmentManager, presenter)
-        viewPager.adapter = pagerAdapter
+        createPagerAdapter(viewPager)
         viewPager.addOnPageChangeListener(presenter)
+    }
+
+    private fun createPagerAdapter(viewPager: ViewPager) {
+        val pagerAdapter = MainPagerAdapter(supportFragmentManager, presenter)
+        viewPager.adapter = pagerAdapter
     }
 }

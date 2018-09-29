@@ -1,14 +1,15 @@
 package com.mdowds.livedepartures.mainpage
 
+import com.mdowds.livedepartures.ArrivalsDataSource
 import com.mdowds.livedepartures.Mode
 import com.mdowds.livedepartures.NearbyStopPointsDataSource
 import com.mdowds.livedepartures.helpers.TestDataFactory
 import com.mdowds.livedepartures.networking.TflStopPoint
 import com.mdowds.livedepartures.networking.TflStopPoints
 import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
 import org.junit.Before
 import org.junit.Test
+import org.junit.Assert.*
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
@@ -16,25 +17,26 @@ import org.robolectric.RobolectricTestRunner
 class MainPresenterTests {
 
     private val mockView = mock<MainView>()
-    private val mockDataSource = NearbyStopPointsDataSource(TestDataFactory.makeConfig(), mock(), mock())
 
     private lateinit var presenter: MainPresenter
 
     @Before
     fun setUp(){
-        presenter = MainPresenter(mockView, mockDataSource)
+        val mockStopPointsDataSource = NearbyStopPointsDataSource(TestDataFactory.makeConfig(), mock(), mock())
+        val mockArrivalsDataSource = ArrivalsDataSource(mock(), TestDataFactory.makeConfig(), mock())
+        presenter = MainPresenter(mockView, mockStopPointsDataSource, mockArrivalsDataSource)
     }
 
     //region stopPointsUpdated
 
     @Test
-    fun `stopPointsUpdated passes the modes of the stop points to the view`() {
+    fun `stopPointsUpdated extracts the modes of the stop points`() {
         val stopPoints = listOf(
                 TestDataFactory.makeTflStopPoint(modes = listOf(Mode.Bus)),
                 TestDataFactory.makeTflStopPoint(modes = listOf(Mode.Tube))
         )
         presenter.stopPointsUpdated(TflStopPoints(stopPoints))
-        verify(mockView).updateModes(listOf(Mode.Bus, Mode.Tube))
+        assertEquals(listOf(Mode.Bus, Mode.Tube), presenter.modes)
     }
 
     @Test
@@ -44,7 +46,7 @@ class MainPresenterTests {
                 TestDataFactory.makeTflStopPoint(modes = listOf(Mode.Bus, Mode.Tube))
         )
         presenter.stopPointsUpdated(TflStopPoints(stopPoints))
-        verify(mockView).updateModes(listOf(Mode.Bus, Mode.Tube))
+        assertEquals(listOf(Mode.Bus, Mode.Tube), presenter.modes)
     }
 
     @Test
@@ -54,7 +56,7 @@ class MainPresenterTests {
                 TflStopPoint("Name", "STOP", "Indicator", listOf("Line"), listOf("helicopter"))
         )
         presenter.stopPointsUpdated(TflStopPoints(stopPoints))
-        verify(mockView).updateModes(listOf(Mode.Bus))
+        assertEquals(listOf(Mode.Bus), presenter.modes)
     }
 
     @Test
@@ -63,7 +65,7 @@ class MainPresenterTests {
                 TestDataFactory.makeTflStopPoint(modes = listOf(Mode.Tube, Mode.RiverBoat, Mode.Bus))
         )
         presenter.stopPointsUpdated(TflStopPoints(stopPoints))
-        verify(mockView).updateModes(listOf(Mode.Bus, Mode.Tube, Mode.RiverBoat))
+        assertEquals(listOf(Mode.Bus, Mode.Tube, Mode.RiverBoat), presenter.modes)
     }
 
     //endregion stopPointsUpdated

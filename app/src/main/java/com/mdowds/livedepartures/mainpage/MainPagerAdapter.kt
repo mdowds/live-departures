@@ -12,7 +12,10 @@ class MainPagerAdapter(fm: FragmentManager,
     override fun getItem(position: Int): Fragment {
         val modeToDisplay = presenter.modes[position]
         if(!modeToDisplay.canGetArrivals) return InactiveModeFragment()
-        return DeparturesFragment().apply { mode = modeToDisplay }
+        return DeparturesFragment().apply {
+            mode = modeToDisplay
+            allStopPoints = presenter.stopPoints
+        }
     }
 
     override fun getCount(): Int = presenter.modes.count()

@@ -24,7 +24,16 @@ object TestDataFactory {
         return TflStopPoints(stopPoints)
     }
 
-    fun makeTflStopPoint(modes: List<Mode> = listOf(Mode.Bus)): TflStopPoint = TflStopPoint("Name", "STOP", "Indicator", listOf("Line"), modes.map { it.tflName })
+    fun makeTflStopPoint(name: String = "Name",
+                         naptanId: String = "STOP",
+                         lines: List<String> = listOf("Line"),
+                         modes: List<Mode> = listOf(Mode.Bus)): TflStopPoint =
+            TflStopPoint("Name",
+                    naptanId,
+                    "Indicator",
+                    lines,
+                    modes.map { it.tflName }
+            )
 
     fun makeTflArrivalPrediction(time: Int = 1, mode: Mode = Mode.Bus) : TflArrivalPrediction = TflArrivalPrediction("Line", "Station", "STN", "Destination", "DST", time, mode.tflName, "Platform")
 
@@ -37,5 +46,5 @@ object TestDataFactory {
                            isTerminating: Boolean = false): Departure =
             Departure(line, destination, departureTime, mode, direction, platform, isTerminating)
 
-    fun makeConfig() : Config = Config(5,5,10,10)
+    fun makeConfig() : Config = Config(5,5,10,10, 200)
 }

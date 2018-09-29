@@ -18,14 +18,18 @@ class TflApiTests {
 
     @Test
     fun `getNearbyStops makes a call to the correct endpoint`() {
-        tflApi.getNearbyStops(0.1, 1.5) {}
-        verify(requestQueue).add(argThat<Request<String>> { url == "https://api.tfl.gov.uk/Place?type=NaptanMetroStation,NaptanRailStation,NaptanPublicBusCoachTram,NaptanFerryPort&lat=0.1&lon=1.5&radius=200"})
+        tflApi.getNearbyStops(0.1, 1.5, 200) {}
+        verify(requestQueue).add(argThat<Request<String>> {
+            url.startsWith("https://api.tfl.gov.uk/Place?type=NaptanMetroStation,NaptanRailStation,NaptanPublicBusCoachTram,NaptanFerryPort&lat=0.1&lon=1.5&radius=200")
+        })
     }
 
     @Test
     fun `getArrivals makes a call to the correct endpoint`() {
         tflApi.getArrivals(TflStopPoint("Waterloo", "WLOO", "", listOf(), listOf())) {}
-        verify(requestQueue).add(argThat<Request<String>> { url == "https://api.tfl.gov.uk/StopPoint/WLOO/Arrivals"})
+        verify(requestQueue).add(argThat<Request<String>> {
+            url.startsWith("https://api.tfl.gov.uk/StopPoint/WLOO/Arrivals")
+        })
     }
 
 }
