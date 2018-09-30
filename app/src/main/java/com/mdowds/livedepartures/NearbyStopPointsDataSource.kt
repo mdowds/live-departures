@@ -21,9 +21,6 @@ class NearbyStopPointsDataSource(private val config: Config,
         }
     }
 
-    var currentStopPoints: TflStopPoints? = null
-        private set
-
     private var currentLocation: Location? = null
 
     fun startUpdates() = locationManager.startLocationUpdates(this::onLocationResponse)
@@ -46,10 +43,7 @@ class NearbyStopPointsDataSource(private val config: Config,
                 this::onStopPointsResponse) { notifyObservers(null) }
     }
 
-    private fun onStopPointsResponse(stopPoints: TflStopPoints) {
-        currentStopPoints = stopPoints
-        notifyObservers(stopPoints)
-    }
+    private fun onStopPointsResponse(stopPoints: TflStopPoints) = notifyObservers(stopPoints)
 
     private fun locationHasSignificantlyChanged(currentLocation: Location?, newLocation: Location): Boolean {
         currentLocation ?: return true
