@@ -25,6 +25,7 @@ android {
             buildConfigField('String', "TFL_APP_KEY", tflAppKey)
         }
         debug {
+            minifyEnabled false
             buildConfigField('String', "TFL_APP_ID", tflAppId)
             buildConfigField('String', "TFL_APP_KEY", tflAppKey)
         }
