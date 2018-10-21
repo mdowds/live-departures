@@ -1,15 +1,16 @@
 package com.mdowds.livedepartures
 
 import android.location.Location
-import android.util.Log
 import com.mdowds.livedepartures.mainpage.MainActivity
-import com.mdowds.livedepartures.networking.*
+import com.mdowds.livedepartures.networking.RequestQueueSingleton
+import com.mdowds.livedepartures.networking.TflApi
+import com.mdowds.livedepartures.networking.TflStopPoints
+import com.mdowds.livedepartures.networking.TransportInfoApi
 import com.mdowds.livedepartures.utils.*
-import com.mdowds.livedepartures.utils.Observable
 
 class NearbyStopPointsDataSource(private val config: Config,
                                  private val locationManager: LocationManager,
-                                 private val api: TransportInfoApi) : Observable<TflStopPoints?>() {
+                                 private val api: TransportInfoApi) : ErrorObservable<TflStopPoints>() {
 
     companion object {
         fun create(view: MainActivity): NearbyStopPointsDataSource {
@@ -40,7 +41,9 @@ class NearbyStopPointsDataSource(private val config: Config,
         api.getNearbyStops(location.latitude,
                 location.longitude,
                 config.radiusToFetchStopsInMetres,
-                this::onStopPointsResponse) { notifyObservers(null) }
+                this::onStopPointsResponse) {
+            notifyObserversOfError(it)
+        }
     }
 
     private fun onStopPointsResponse(stopPoints: TflStopPoints) = notifyObservers(stopPoints)

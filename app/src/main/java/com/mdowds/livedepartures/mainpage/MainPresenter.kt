@@ -2,6 +2,7 @@ package com.mdowds.livedepartures.mainpage
 
 import android.graphics.Color
 import android.support.v4.view.ViewPager
+import com.android.volley.ClientError
 import com.mdowds.livedepartures.ArrivalsDataSource
 import com.mdowds.livedepartures.Mode
 import com.mdowds.livedepartures.NearbyStopPointsDataSource
@@ -19,7 +20,7 @@ class MainPresenter(private val view: MainView,
         private set
 
     init {
-        stopPointsDataSource.addObserver(this::stopPointsUpdated)
+        stopPointsDataSource.addObserver(this::stopPointsUpdated, this::stopPointsError)
     }
 
     fun onResume() {
@@ -52,9 +53,8 @@ class MainPresenter(private val view: MainView,
     override fun onPageScrollStateChanged(state: Int) {}
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
-    fun stopPointsUpdated(newStopPoints: TflStopPoints?) {
+    fun stopPointsUpdated(newStopPoints: TflStopPoints) {
 
-        if(newStopPoints == null) return view.showRetryMessage()
         if(newStopPoints.places.isEmpty()) return view.showNoStopsMessage()
 
         view.showLoadingSpinner()
@@ -73,5 +73,12 @@ class MainPresenter(private val view: MainView,
 
         view.refreshStopPoints()
         view.showDeparturesPages()
+    }
+
+    private fun stopPointsError(error: Exception) {
+        when(error) {
+            is ClientError -> view.showNoStopsMessage()
+            else -> view.showRetryMessage()
+        }
     }
 }
