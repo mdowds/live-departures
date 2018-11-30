@@ -2,7 +2,7 @@ package com.mdowds.livedepartures.departurespage
 
 import com.mdowds.livedepartures.Departure
 import com.mdowds.livedepartures.Mode
-import com.mdowds.livedepartures.networking.TflArrivalPrediction
+import com.mdowds.livedepartures.networking.model.TflArrivalPrediction
 import org.junit.Test
 import org.junit.Assert.*
 import org.junit.runner.RunWith

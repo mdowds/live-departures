@@ -4,8 +4,8 @@ import com.mdowds.livedepartures.ArrivalsDataSource
 import com.mdowds.livedepartures.Mode
 import com.mdowds.livedepartures.NearbyStopPointsDataSource
 import com.mdowds.livedepartures.helpers.TestDataFactory
-import com.mdowds.livedepartures.networking.TflStopPoint
-import com.mdowds.livedepartures.networking.TflStopPoints
+import com.mdowds.livedepartures.networking.model.TflStopPoint
+import com.mdowds.livedepartures.networking.model.TflStopPoints
 import com.nhaarman.mockitokotlin2.mock
 import org.junit.Before
 import org.junit.Test

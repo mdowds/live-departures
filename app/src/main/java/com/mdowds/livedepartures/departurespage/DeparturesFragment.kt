@@ -8,9 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.mdowds.livedepartures.*
 import com.mdowds.livedepartures.mainpage.MainActivity
-import com.mdowds.livedepartures.networking.TflStopPoint
-import com.mdowds.livedepartures.networking.TflStopPoints
-import io.github.luizgrp.sectionedrecyclerviewadapter.Section
+import com.mdowds.livedepartures.networking.model.TflStopPoint
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.LOADED
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section.State.LOADING
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter

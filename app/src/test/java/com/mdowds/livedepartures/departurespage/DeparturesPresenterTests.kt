@@ -6,8 +6,8 @@ import com.mdowds.livedepartures.helpers.TestDataFactory.makeConfig
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeTflArrivalPrediction
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeTflStopPoint
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeTflStopPoints
-import com.mdowds.livedepartures.networking.TflArrivalPrediction
-import com.mdowds.livedepartures.networking.TflStopPoints
+import com.mdowds.livedepartures.networking.model.TflArrivalPrediction
+import com.mdowds.livedepartures.networking.model.TflStopPoints
 import com.nhaarman.mockitokotlin2.*
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue

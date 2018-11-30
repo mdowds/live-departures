@@ -2,6 +2,8 @@ package com.mdowds.livedepartures
 
 import com.mdowds.livedepartures.mainpage.MainActivity
 import com.mdowds.livedepartures.networking.*
+import com.mdowds.livedepartures.networking.model.TflArrivalPrediction
+import com.mdowds.livedepartures.networking.model.TflStopPoint
 import com.mdowds.livedepartures.utils.AppConfig
 import com.mdowds.livedepartures.utils.Config
 import com.mdowds.livedepartures.utils.Observable

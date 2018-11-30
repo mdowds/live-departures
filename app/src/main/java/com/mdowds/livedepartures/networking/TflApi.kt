@@ -9,6 +9,9 @@ import com.android.volley.toolbox.StringRequest
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.mdowds.livedepartures.BuildConfig
+import com.mdowds.livedepartures.networking.model.TflArrivalPrediction
+import com.mdowds.livedepartures.networking.model.TflStopPoint
+import com.mdowds.livedepartures.networking.model.TflStopPoints
 
 private const val BASE_URL = "https://api.tfl.gov.uk"
 

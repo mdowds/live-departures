@@ -6,8 +6,8 @@ import com.android.volley.ClientError
 import com.mdowds.livedepartures.ArrivalsDataSource
 import com.mdowds.livedepartures.Mode
 import com.mdowds.livedepartures.NearbyStopPointsDataSource
-import com.mdowds.livedepartures.networking.TflStopPoint
-import com.mdowds.livedepartures.networking.TflStopPoints
+import com.mdowds.livedepartures.networking.model.TflStopPoint
+import com.mdowds.livedepartures.networking.model.TflStopPoints
 
 class MainPresenter(private val view: MainView,
                     private val stopPointsDataSource: NearbyStopPointsDataSource,

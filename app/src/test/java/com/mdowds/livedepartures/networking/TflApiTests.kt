@@ -2,6 +2,7 @@ package com.mdowds.livedepartures.networking
 
 import com.android.volley.Request
 import com.android.volley.RequestQueue
+import com.mdowds.livedepartures.networking.model.TflStopPoint
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify

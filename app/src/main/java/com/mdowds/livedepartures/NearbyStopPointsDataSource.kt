@@ -4,7 +4,7 @@ import android.location.Location
 import com.mdowds.livedepartures.mainpage.MainActivity
 import com.mdowds.livedepartures.networking.RequestQueueSingleton
 import com.mdowds.livedepartures.networking.TflApi
-import com.mdowds.livedepartures.networking.TflStopPoints
+import com.mdowds.livedepartures.networking.model.TflStopPoints
 import com.mdowds.livedepartures.networking.TransportInfoApi
 import com.mdowds.livedepartures.utils.*
 

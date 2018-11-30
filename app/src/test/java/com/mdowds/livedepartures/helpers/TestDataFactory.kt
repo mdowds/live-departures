@@ -4,9 +4,9 @@ import android.location.Location
 import com.google.android.gms.location.LocationResult
 import com.mdowds.livedepartures.Departure
 import com.mdowds.livedepartures.Mode
-import com.mdowds.livedepartures.networking.TflArrivalPrediction
-import com.mdowds.livedepartures.networking.TflStopPoint
-import com.mdowds.livedepartures.networking.TflStopPoints
+import com.mdowds.livedepartures.networking.model.TflArrivalPrediction
+import com.mdowds.livedepartures.networking.model.TflStopPoint
+import com.mdowds.livedepartures.networking.model.TflStopPoints
 import com.mdowds.livedepartures.utils.Config
 import com.nhaarman.mockitokotlin2.mock
 

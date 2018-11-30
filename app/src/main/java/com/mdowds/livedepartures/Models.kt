@@ -1,8 +1,8 @@
 package com.mdowds.livedepartures
 
 import android.graphics.Color
-import com.mdowds.livedepartures.networking.TflArrivalPrediction
-import com.mdowds.livedepartures.networking.TflStopPoint
+import com.mdowds.livedepartures.networking.model.TflArrivalPrediction
+import com.mdowds.livedepartures.networking.model.TflStopPoint
 
 data class Departure(val line: String, val destination: String, val departureTime: String, val mode: Mode?, val direction: String, val platform: String, val isTerminating: Boolean) {
 

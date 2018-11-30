@@ -1,7 +1,7 @@
 package com.mdowds.livedepartures.departurespage
 
 import com.mdowds.livedepartures.*
-import com.mdowds.livedepartures.networking.TflStopPoint
+import com.mdowds.livedepartures.networking.model.TflStopPoint
 import com.mdowds.livedepartures.utils.AppConfig
 import com.mdowds.livedepartures.utils.Config
 

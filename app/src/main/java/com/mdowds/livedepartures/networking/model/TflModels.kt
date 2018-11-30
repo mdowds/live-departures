@@ -1,4 +1,4 @@
-package com.mdowds.livedepartures.networking
+package com.mdowds.livedepartures.networking.model
 
 data class TflArrivalPrediction(val lineName: String,
                                 val stationName: String,
