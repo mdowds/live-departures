@@ -9,7 +9,6 @@ def tflAppKey = hasProperty('LiveDepartures_tflAppKey') ? LiveDepartures_tflAppK
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.2"
     defaultConfig {
         applicationId 'com.mdowds.livedepartures'
         minSdkVersion 25
