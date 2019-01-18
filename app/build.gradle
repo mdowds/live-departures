@@ -64,5 +64,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.23.4'
     testImplementation 'org.robolectric:robolectric:4.2-SNAPSHOT'
-    testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.0.0-RC1'
+    testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0'
 }
