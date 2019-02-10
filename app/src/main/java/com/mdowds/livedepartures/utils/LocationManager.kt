@@ -15,10 +15,14 @@ interface LocationManager {
 
 class FusedLocationManager(private val fusedLocationClient: FusedLocationProviderClient,
                            private val requestingActivity: Activity,
-                           private val permissionsManager: PermissionsManager) : LocationManager {
+                           private val permissionsManager: PermissionsManager,
+                           private val config: Config) : LocationManager {
 
-    constructor(requestingActivity: Activity) : this(
-            LocationServices.getFusedLocationProviderClient(requestingActivity), requestingActivity, DevicePermissionsManager()
+    constructor(requestingActivity: Activity, config: Config) : this(
+            LocationServices.getFusedLocationProviderClient(requestingActivity),
+            requestingActivity,
+            DevicePermissionsManager(),
+            config
     )
 
     private val locationCallback = object : LocationCallback() {
@@ -40,9 +44,10 @@ class FusedLocationManager(private val fusedLocationClient: FusedLocationProvide
 
             locationCallback.lastLocationCallback = callback
 
+            val refreshInterval = config.distanceToFetchNewStopsInMetres * 1000L
             val locationRequest = LocationRequest().apply {
-                interval = 10000
-                fastestInterval = 5000
+                interval = refreshInterval
+                fastestInterval = refreshInterval / 2
                 priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             }
 

@@ -16,7 +16,7 @@ class NearbyStopPointsDataSource(private val config: Config,
         fun create(view: MainActivity): NearbyStopPointsDataSource {
 
             val config = AppConfig(view.resources).config
-            val locationManager = FusedLocationManager(view)
+            val locationManager = FusedLocationManager(view, config)
 
             return NearbyStopPointsDataSource(config, locationManager, TflApi(RequestQueueSingleton.getInstance(view.applicationContext).requestQueue))
         }

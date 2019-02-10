@@ -6,6 +6,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
+import com.mdowds.livedepartures.helpers.TestDataFactory.makeConfig
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeLocation
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeLocationResult
 import com.nhaarman.mockitokotlin2.*
@@ -20,7 +21,7 @@ class FusedLocationManagerTests {
     private val mockPermissionsManager = mock<PermissionsManager> {
         on { isPermissionGranted(any(), any()) }.thenReturn(true)
     }
-    private val locationManager = FusedLocationManager(mockLocationClient, mockActivity, mockPermissionsManager)
+    private val locationManager = FusedLocationManager(mockLocationClient, mockActivity, mockPermissionsManager, makeConfig())
 
     @Before
     fun beforeEach(){
