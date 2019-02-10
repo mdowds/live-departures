@@ -4,7 +4,6 @@ import android.util.Log
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.Response
-import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -17,7 +16,7 @@ private const val BASE_URL = "https://api.tfl.gov.uk"
 
 typealias ArrivalsCallback = (List<TflArrivalPrediction>) -> Unit
 typealias NearbyStopsCallback = (TflStopPoints) -> Unit
-typealias ErrorCallback = (VolleyError) -> Unit
+typealias ErrorCallback = (Exception) -> Unit
 
 interface TransportInfoApi {
     fun getNearbyStops(lat: Double, lon: Double, radius: Int, callback: NearbyStopsCallback, errorCallback: ErrorCallback? = null)
@@ -55,7 +54,15 @@ class TflApi(private val requestQueue: RequestQueue): TransportInfoApi {
         Log.i("GET", url)
         val request = StringRequest(Request.Method.GET,
                 url,
-                Response.Listener(responseCallback),
+                Response.Listener{
+                    try{
+                        responseCallback(it)
+                    } catch (e: Exception) {
+                        Log.e("Error processing API response", it.toString())
+                        Log.i("Error encountered requesting", url)
+                        if(errorCallback != null) errorCallback(e)
+                    }
+                },
                 Response.ErrorListener {
                     Log.e("API request error", it.toString())
                     Log.i("Error encountered requesting", url)
