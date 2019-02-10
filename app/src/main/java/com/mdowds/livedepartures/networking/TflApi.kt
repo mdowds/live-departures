@@ -58,6 +58,7 @@ class TflApi(private val requestQueue: RequestQueue): TransportInfoApi {
                 Response.Listener(responseCallback),
                 Response.ErrorListener {
                     Log.e("API request error", it.toString())
+                    Log.i("Error encountered requesting", url)
                     if(errorCallback != null) errorCallback(it)
                 }
         )

@@ -7,7 +7,6 @@ import android.support.v4.view.ViewPager
 import android.util.Log
 import android.view.View
 import com.mdowds.livedepartures.ArrivalsDataSource
-import com.mdowds.livedepartures.Mode
 import com.mdowds.livedepartures.NearbyStopPointsDataSource
 import com.mdowds.livedepartures.R
 import com.mdowds.livedepartures.utils.DevicePermissionsManager.Companion.PERMISSIONS_REQUEST_CODE
