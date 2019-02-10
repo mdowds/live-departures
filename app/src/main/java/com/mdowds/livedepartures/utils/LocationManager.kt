@@ -35,6 +35,9 @@ class FusedLocationManager(private val fusedLocationClient: FusedLocationProvide
     override fun startLocationUpdates(callback: LastLocationCallback) {
         if (permissionsManager.isPermissionGranted(requestingActivity, ACCESS_FINE_LOCATION)) {
 
+            // Send last known location first in case the watch can't get an updated one from the phone
+            fusedLocationClient.lastLocation.addOnSuccessListener(callback)
+
             locationCallback.lastLocationCallback = callback
 
             val locationRequest = LocationRequest().apply {

@@ -10,6 +10,7 @@ import com.mdowds.livedepartures.helpers.TestDataFactory.makeLocation
 import com.mdowds.livedepartures.helpers.TestDataFactory.makeLocationResult
 import com.nhaarman.mockitokotlin2.*
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
 
 class FusedLocationManagerTests {
@@ -20,6 +21,11 @@ class FusedLocationManagerTests {
         on { isPermissionGranted(any(), any()) }.thenReturn(true)
     }
     private val locationManager = FusedLocationManager(mockLocationClient, mockActivity, mockPermissionsManager)
+
+    @Before
+    fun beforeEach(){
+        whenever(mockLocationClient.lastLocation).thenReturn(mock())
+    }
 
     @Test
     fun `startLocationUpdates calls location client with correct request`() {
