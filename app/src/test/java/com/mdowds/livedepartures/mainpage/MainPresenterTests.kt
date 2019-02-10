@@ -1,5 +1,6 @@
 package com.mdowds.livedepartures.mainpage
 
+import android.graphics.Color
 import com.mdowds.livedepartures.ArrivalsDataSource
 import com.mdowds.livedepartures.Mode
 import com.mdowds.livedepartures.NearbyStopPointsDataSource
@@ -7,6 +8,7 @@ import com.mdowds.livedepartures.helpers.TestDataFactory
 import com.mdowds.livedepartures.networking.model.TflStopPoint
 import com.mdowds.livedepartures.networking.model.TflStopPoints
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import org.junit.Before
 import org.junit.Test
 import org.junit.Assert.*
@@ -69,4 +71,61 @@ class MainPresenterTests {
     }
 
     //endregion stopPointsUpdated
+
+    //region onPageSelected
+
+    @Test
+    fun `onPageSelected sets the header to the right colours for the selected mode`(){
+        val stopPoints = listOf(
+                TestDataFactory.makeTflStopPoint(modes = listOf(Mode.Bus)),
+                TestDataFactory.makeTflStopPoint(modes = listOf(Mode.Tube))
+        )
+        presenter.stopPointsUpdated(TflStopPoints(stopPoints))
+
+        presenter.onPageSelected(1)
+        verify(mockView).setHeaderBackgroundColor(Mode.Tube.color)
+        verify(mockView).setHeaderTextColor(Color.WHITE)
+    }
+
+    @Test
+    fun `onPageSelected changes the text colour to black when the mode colour is white`(){
+        val stopPoints = listOf(
+                TestDataFactory.makeTflStopPoint(modes = listOf(Mode.Bus)),
+                TestDataFactory.makeTflStopPoint(modes = listOf(Mode.NationalRail))
+        )
+        presenter.stopPointsUpdated(TflStopPoints(stopPoints))
+
+        presenter.onPageSelected(1)
+        verify(mockView).setHeaderBackgroundColor(Mode.NationalRail.color)
+        verify(mockView).setHeaderTextColor(Color.BLACK)
+    }
+
+    //endregion
+
+    //region onEnterAmbient
+
+    @Test
+    fun `onEnterAmbient sets the header colours to black and white`(){
+        presenter.onEnterAmbient(null)
+        verify(mockView).setHeaderBackgroundColor(Color.BLACK)
+        verify(mockView).setHeaderTextColor(Color.WHITE)
+    }
+
+    //endregion
+
+    // region onExitAmbient
+
+    @Test
+    fun `onExitAmbient sets the header colours back to full colour`(){
+        val stopPoints = listOf(
+                TestDataFactory.makeTflStopPoint(modes = listOf(Mode.Bus))
+        )
+        presenter.stopPointsUpdated(TflStopPoints(stopPoints))
+
+        presenter.onExitAmbient()
+        verify(mockView).setHeaderBackgroundColor(Mode.Bus.color)
+        verify(mockView).setHeaderTextColor(Color.WHITE)
+    }
+
+    //endregion
 }

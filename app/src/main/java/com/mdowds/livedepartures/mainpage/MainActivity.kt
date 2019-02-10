@@ -4,6 +4,7 @@ import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.support.v4.view.ViewPager
+import android.support.wear.ambient.AmbientModeSupport
 import android.util.Log
 import android.view.View
 import com.mdowds.livedepartures.ArrivalsDataSource
@@ -22,7 +23,7 @@ interface MainView {
     fun showNoStopsMessage()
 }
 
-class MainActivity : FragmentActivity(), MainView {
+class MainActivity : FragmentActivity(), MainView, AmbientModeSupport.AmbientCallbackProvider {
 
     lateinit var stopPointsDataSource: NearbyStopPointsDataSource
         private set
@@ -32,6 +33,7 @@ class MainActivity : FragmentActivity(), MainView {
 
     private lateinit var presenter: MainPresenter
     private lateinit var viewPager: ViewPager
+    private lateinit var ambientController: AmbientModeSupport.AmbientController
 
     //region lifecycle
 
@@ -43,6 +45,7 @@ class MainActivity : FragmentActivity(), MainView {
         presenter = MainPresenter(this, stopPointsDataSource, arrivalsDataSource)
         setUpViewPager()
         showLoadingSpinner()
+        ambientController = AmbientModeSupport.attach(this)
     }
 
     override fun onResume() {
@@ -88,6 +91,8 @@ class MainActivity : FragmentActivity(), MainView {
     fun onClickRetry(view: View) = presenter.onClickRetry()
 
     //endregion
+
+    override fun getAmbientCallback(): AmbientModeSupport.AmbientCallback = presenter
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == PERMISSIONS_REQUEST_CODE) {
