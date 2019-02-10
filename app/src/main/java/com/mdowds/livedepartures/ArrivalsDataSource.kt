@@ -35,7 +35,7 @@ class ArrivalsDataSource(private val api: TransportInfoApi,
         arrivalRequestsTimer.scheduleAtFixedRate(repeatedTask, 0L, period)
     }
 
-    fun stopUpdates() = arrivalRequestsTimer.purge()
+    fun stopUpdates() = arrivalRequestsTimer.cancel()
 
     fun addStopPoint(stopPoint: TflStopPoint) {
         requestArrivals(stopPoint)
