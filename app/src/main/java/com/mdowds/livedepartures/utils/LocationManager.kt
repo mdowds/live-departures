@@ -40,7 +40,9 @@ class FusedLocationManager(private val fusedLocationClient: FusedLocationProvide
         if (permissionsManager.isPermissionGranted(requestingActivity, ACCESS_FINE_LOCATION)) {
 
             // Send last known location first in case the watch can't get an updated one from the phone
-            fusedLocationClient.lastLocation.addOnSuccessListener(callback)
+            fusedLocationClient.lastLocation.addOnSuccessListener {
+                if(it != null) callback(it)
+            }
 
             locationCallback.lastLocationCallback = callback
 

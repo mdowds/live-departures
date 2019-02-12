@@ -14,13 +14,12 @@ import java.util.*
 class ArrivalsDataSourceTests {
 
     private val mockApi = mock<TransportInfoApi>()
-    private val mockTimer = mock<Timer>()
 
     private lateinit var dataSource: ArrivalsDataSource
 
     @Before
     fun setUp(){
-        dataSource = ArrivalsDataSource(mockApi, makeConfig(), mockTimer)
+        dataSource = ArrivalsDataSource(mockApi, makeConfig())
     }
 
     //region addStopPoint

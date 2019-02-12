@@ -12,19 +12,19 @@ import java.util.*
 typealias ArrivalsResponse = Pair<TflStopPoint, List<TflArrivalPrediction>>
 
 class ArrivalsDataSource(private val api: TransportInfoApi,
-                         private val config: Config,
-                         private val arrivalRequestsTimer: Timer): Observable<ArrivalsResponse>() {
+                         private val config: Config): Observable<ArrivalsResponse>() {
 
     companion object {
         fun create(view: MainActivity): ArrivalsDataSource {
 
             val config = AppConfig(view.resources).config
 
-            return ArrivalsDataSource(TflApi(RequestQueueSingleton.getInstance(view.applicationContext).requestQueue), config, Timer("Arrival requests"))
+            return ArrivalsDataSource(TflApi(RequestQueueSingleton.getInstance(view.applicationContext).requestQueue), config)
         }
     }
 
     private val requestArrivalsFor = mutableListOf<TflStopPoint>()
+    private var arrivalRequestsTimer: Timer? = null
 
     fun startUpdates() {
         val repeatedTask = object : TimerTask() {
@@ -32,10 +32,11 @@ class ArrivalsDataSource(private val api: TransportInfoApi,
         }
 
         val period = (config.departuresRefreshInSecs * 1000).toLong()
-        arrivalRequestsTimer.scheduleAtFixedRate(repeatedTask, 0L, period)
+        arrivalRequestsTimer = Timer("Arrival requests")
+        arrivalRequestsTimer?.scheduleAtFixedRate(repeatedTask, 0L, period)
     }
 
-    fun stopUpdates() = arrivalRequestsTimer.cancel()
+    fun stopUpdates() = arrivalRequestsTimer?.cancel()
 
     fun addStopPoint(stopPoint: TflStopPoint) {
         requestArrivals(stopPoint)

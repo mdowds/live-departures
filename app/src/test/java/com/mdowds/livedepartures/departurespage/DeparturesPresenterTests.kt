@@ -20,7 +20,7 @@ import org.robolectric.RobolectricTestRunner
 class DeparturesPresenterTests {
 
     private val mockView = mock<DeparturesView>()
-    private val mockDataSource = ArrivalsDataSource(mock(), makeConfig(), mock())
+    private val mockDataSource = ArrivalsDataSource(mock(), makeConfig())
 
     private lateinit var presenter: DeparturesPresenter
 

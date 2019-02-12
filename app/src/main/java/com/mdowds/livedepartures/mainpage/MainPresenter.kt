@@ -74,17 +74,22 @@ class MainPresenter(private val view: MainView,
         super.onEnterAmbient(ambientDetails)
         view.setHeaderBackgroundColor(Color.BLACK)
         view.setHeaderTextColor(Color.WHITE)
+        stopPointsDataSource.stopUpdates()
+        arrivalsDataSource.stopUpdates()
     }
 
     override fun onExitAmbient() {
         Log.d("MainPresenter", "Exiting ambient mode")
         super.onExitAmbient()
+        stopPointsDataSource.startUpdates()
+        arrivalsDataSource.startUpdates()
         setHeaderColors()
     }
 
     override fun onUpdateAmbient() {
         Log.d("MainPresenter", "Ambient mode update")
         super.onUpdateAmbient()
+        arrivalsDataSource.requestArrivalsForAll()
     }
 
     //endregion

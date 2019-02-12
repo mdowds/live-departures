@@ -25,7 +25,7 @@ class MainPresenterTests {
     @Before
     fun setUp(){
         val mockStopPointsDataSource = NearbyStopPointsDataSource(TestDataFactory.makeConfig(), mock(), mock())
-        val mockArrivalsDataSource = ArrivalsDataSource(mock(), TestDataFactory.makeConfig(), mock())
+        val mockArrivalsDataSource = ArrivalsDataSource(mock(), TestDataFactory.makeConfig())
         presenter = MainPresenter(mockView, mockStopPointsDataSource, mockArrivalsDataSource)
     }
 
