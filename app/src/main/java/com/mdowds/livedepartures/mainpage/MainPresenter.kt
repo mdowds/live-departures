@@ -84,7 +84,7 @@ class MainPresenter(private val view: MainView,
         super.onExitAmbient()
         stopPointsDataSource.startUpdates()
         arrivalsDataSource.startUpdates()
-        setHeaderColors()
+        if(modes.count() > 0) setHeaderColors()
     }
 
     override fun onUpdateAmbient() {

@@ -13,7 +13,7 @@
         android:layout_weight="1"
         tools:text="Station name"
         android:textAlignment="center"
-        android:textSize="21sp"
+        android:textSize="@dimen/large_text"
         android:textStyle="bold" />
 
     <TextView
@@ -23,8 +23,7 @@
         android:layout_weight="1"
         tools:text="Stop indicator"
         android:textAlignment="center"
-        android:textSize="21sp"
-        android:textStyle="bold" />
+        android:textSize="@dimen/large_text" />
 
     <TextView
         android:id="@+id/no_departures_text"

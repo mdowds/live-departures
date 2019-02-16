@@ -78,7 +78,7 @@ class MainActivity : FragmentActivity(), MainView, AmbientModeSupport.AmbientCal
 
     override fun showLoadingSpinner() = hideAllExcept(fullScreenProgressBar)
 
-    override fun showDeparturesPages() = hideAllExcept(viewPager)
+    override fun showDeparturesPages() = hideAllExcept(viewPagerContainer)
 
     override fun showRetryMessage() = hideAllExcept(retryMessage)
 
@@ -128,7 +128,7 @@ class MainActivity : FragmentActivity(), MainView, AmbientModeSupport.AmbientCal
     }
 
     private fun hideAllExcept(view: View) {
-        val views = listOf(viewPager, retryMessage, fullScreenProgressBar, noStopsMessage)
+        val views = listOf(viewPagerContainer, retryMessage, fullScreenProgressBar, noStopsMessage)
         views.forEach {
             it.visibility = if(it == view) View.VISIBLE else View.GONE
         }
