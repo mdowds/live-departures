@@ -1,5 +1,6 @@
 package com.mdowds.livedepartures.departurespage
 
+import android.util.Log
 import com.mdowds.livedepartures.*
 import com.mdowds.livedepartures.networking.model.TflStopPoint
 import com.mdowds.livedepartures.utils.AppConfig
@@ -40,6 +41,7 @@ class DeparturesPresenter(private val view: DeparturesView,
     }
 
     fun onNewArrivalsResponse(response: ArrivalsResponse) {
+        Log.d("DeparturesPresenter", "New arrivals received for ${response.first.commonName}")
         val (tflStopPoint, newResults) = response
         if (stopPoints.contains(tflStopPoint)) {
             val newResultsOrdered = newResults.sortedBy { it.timeToStation }

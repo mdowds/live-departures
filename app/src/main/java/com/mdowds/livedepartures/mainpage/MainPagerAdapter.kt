@@ -3,6 +3,7 @@ package com.mdowds.livedepartures.mainpage
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
+import android.util.Log
 import com.mdowds.livedepartures.departurespage.DeparturesFragment
 import com.mdowds.livedepartures.departurespage.InactiveModeFragment
 
@@ -10,6 +11,7 @@ class MainPagerAdapter(fm: FragmentManager,
                        private val presenter: MainPresenter) : FragmentStatePagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {
+        Log.d("MainPagerAdapter", "Change page to $position")
         val modeToDisplay = presenter.modes[position]
         if(!modeToDisplay.canGetArrivals) return InactiveModeFragment()
         return DeparturesFragment().apply {

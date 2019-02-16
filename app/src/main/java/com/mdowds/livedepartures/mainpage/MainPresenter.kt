@@ -58,6 +58,7 @@ class MainPresenter(private val view: MainView,
     //region OnPageChangeListener implementation
 
     override fun onPageSelected(position: Int) {
+        Log.d("MainPresenter", "Change page to $position")
         currentPosition = position
         setHeaderColors()
     }
@@ -97,6 +98,7 @@ class MainPresenter(private val view: MainView,
     //region StopPointsDataSource observer
 
     fun stopPointsUpdated(newStopPoints: TflStopPoints) {
+        Log.d("MainPresenter", "New stop points received")
 
         if(newStopPoints.places.isEmpty()) return view.showNoStopsMessage()
 
