@@ -1,8 +1,7 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'idea'
 
 def tflAppId = hasProperty('LiveDepartures_tflAppId') ? LiveDepartures_tflAppId : '"NO_APP_ID"'
 def tflAppKey = hasProperty('LiveDepartures_tflAppKey') ? LiveDepartures_tflAppKey : '"NO_APP_KEY"'
@@ -64,4 +63,11 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.24.0'
     testImplementation 'org.robolectric:robolectric:4.1'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0'
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
 }
