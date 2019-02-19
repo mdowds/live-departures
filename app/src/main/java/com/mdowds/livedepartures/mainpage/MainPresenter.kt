@@ -116,6 +116,8 @@ class MainPresenter(private val view: MainView,
                 .sorted()
                 .toList()
 
+        currentPosition = 0
+
         view.refreshStopPoints()
         view.showDeparturesPages()
     }
