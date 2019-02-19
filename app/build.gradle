@@ -12,8 +12,8 @@ android {
         applicationId 'com.mdowds.livedepartures'
         minSdkVersion 25
         targetSdkVersion 28
-        versionCode 5
-        versionName '0.2'
+        versionCode 6
+        versionName '0.2.1'
         buildConfigField('String', "TFL_APP_ID", tflAppId)
         buildConfigField('String', "TFL_APP_KEY", tflAppKey)
     }
