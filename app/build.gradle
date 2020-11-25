@@ -60,7 +60,7 @@ dependencies {
     compileOnly 'com.google.android.wearable:wearable:2.4.0'
 
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:2.27.0'
+    testImplementation 'org.mockito:mockito-core:3.6.28'
     testImplementation 'org.robolectric:robolectric:4.2.1'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0'
 }
